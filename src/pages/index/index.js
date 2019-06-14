@@ -1,14 +1,13 @@
 import Taro, { Component } from '@tarojs/taro'
 import {
   View,
-  Text,
-  Button,
 } from '@tarojs/components'
 import {
-  AtGrid,
-  AtInput,
-  AtMessage,
+  AtAvatar,
+  AtButton,
 } from 'taro-ui'
+
+import NumberBoard from './components/NumberBoard';
 
 import './index.less'
 
@@ -110,6 +109,14 @@ export default class Index extends Component {
     });
   }
 
+  selectNumber = (value) => {
+    setTimeout(() => {
+      Taro.navigateTo({
+        url: `/pages/number/index?value=${value}`,
+      });
+    }, 200);
+  }
+
   render () {
     const {
       username,
@@ -117,31 +124,9 @@ export default class Index extends Component {
       show,
       estimate,
     } = this.state;
-
-    const allUser = users.map((user) => {
-      return <View key={user.id}><Text key={user.id}>{user.username}</Text></View>
-    });
-    if (show) {
-      return (
-        <View className='index'>
-          <AtInput value={estimate} onChange={this.handleEstimateChange} />
-          <Button onClick={this.handleEnsureEstimate}>确认</Button>
-        </View>
-      );
-    }
     return (
-      <View className='index'>
-        <AtMessage />
-        <AtInput
-          placeholder="请输入用户名"
-          value={username}
-          onChange={this.handleUsernameChange}
-        />
-        <Button type="primary" onClick={this.joinRoom}>确认</Button>
-        <AtGrid onClick={this.handleClickNumber} data={users.map(user => ({
-          ...user,
-          value: user.username,
-        }))} />
+      <View className='numbers__wrapper'>
+        <NumberBoard onClick={this.selectNumber} />
       </View>
     )
   }
