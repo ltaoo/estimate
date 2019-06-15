@@ -8,10 +8,16 @@ export default observable({
 
     // 初始化监听
     client.on('joinRoom', ({ user, users }) => {
-      this.joinRoom(user);
+      console.log(`${user.username} join room, now member of room is`, users);
+      // this.joinRoom(user, users);
+      this.users = users;
     });
     client.on('leaveRoom', ({ user }) => {
       this.leaveRoom(user);
+    });
+    // 错误
+    client.on('err', ({ message }) => {
+      console.log('error', message);
     });
   },
 
@@ -31,8 +37,10 @@ export default observable({
   updateRoomId(value) {
     this.roomId = value;
   },
-  joinRoom(user) {
-    this.users.push(user);
+  joinRoom(user, users) {
+    console.log('call join room', user, users);
+    // this.users.push(user);
+    this.users = users;
   },
   leaveRoom(user) {
     this.users = this.users.filter(user => user.username !== user.username);

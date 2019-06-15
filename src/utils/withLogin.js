@@ -21,7 +21,7 @@ export default (params) => {
       }
     }
 
-    const wrappedComponent = observer(inject('global')(HOC));
+    const wrappedComponent = inject('global')(observer(HOC));
     return wrappedComponent;
   }
 }

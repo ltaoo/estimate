@@ -76,7 +76,16 @@ export default class Hall extends Component {
       });
       return;
     }
-    client.emit('joinRoom', { id: roomId });
+    client.emit('joinRoom', { roomId }, (err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      // 跳转到房间
+      Taro.navigateTo({
+        url: room,
+      });
+    });
   }
 
   render() {

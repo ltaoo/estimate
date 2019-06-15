@@ -7,16 +7,25 @@ import {
 import {
   AtInput,
 } from 'taro-ui';
+import { observer, inject } from '@tarojs/mobx';
 
+import { checkLogin, redirectLogin } from '../../utils';
 import withLogin from '../../utils/withLogin';
 
-@withLogin()
+@inject('global')
+@observer
 export default class Room extends Component {
   constructor(props) {
     super(props);
   }
   componentDidMount() {
-    // 监听
+    const { global } = this.props;
+    const { username } = global;
+
+    if (!checkLogin(global)) {
+      redirectLogin();
+      return;
+    }
   }
   /**
    * 开始估时
@@ -27,8 +36,12 @@ export default class Room extends Component {
   }
 
   render() {
-    const { global: { roomId, users } } = this.props;
-    console.log(users);
+    const { global: { username, roomId, users } } = this.props;
+    const owner = users.find(user => user.admin);
+    let isAdmin = false;
+    if (owner && owner.username === username) {
+      isAdmin = true;
+    }
     return (
       <View className="room-page">
         <Text>房间ID: {roomId}</Text>
@@ -42,7 +55,7 @@ export default class Room extends Component {
             </View>
           ))}
         </View>
-        <Button onClick={this.startEstimate}>开始</Button>
+        {isAdmin && <Button onClick={this.startEstimate}>开始</Button>}
       </View>
     );
   }
