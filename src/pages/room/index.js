@@ -31,15 +31,19 @@ export default class Room extends Component {
    * 开始估时
    */
   startEstimate = () => {
-    const { id } = this.$router.params;
-    this.client.emit('startEstimate', { id });
+    const { global: { client, roomId } } = this.props;
+    client.emit('startEstimate', { roomId });
   }
 
   render() {
     const { global: { username, roomId, users } } = this.props;
     const owner = users.find(user => user.admin);
     let isAdmin = false;
-    if (owner && owner.username === username) {
+    if (
+      owner
+      && owner.username === username
+      && owner.roomId === roomId
+    ) {
       isAdmin = true;
     }
     return (

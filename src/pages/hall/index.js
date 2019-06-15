@@ -10,7 +10,7 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
-import { socketUrl, room } from '../../constants';
+import { socketUrl, room, home } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
 @inject('global')
@@ -41,6 +41,12 @@ export default class Hall extends Component {
     client.on('joinRoom', this.handleNewUserJoinToRoom);
 
     client.on('estimate', this.getEstimate);
+
+    client.on('startEstimate', () => {
+      Taro.navigateTo({
+        url: home,
+      });
+    });
 
     client.on('disconnect', () => {
       console.log('和服务器断开连接，请点击重连');
