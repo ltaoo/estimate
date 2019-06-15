@@ -35,22 +35,6 @@ export default class Hall extends Component {
     // 连接 socket.io
     const client = io(`${socketUrl}?username=${username}`);
     global.createClient(client);
-
-    client.on('global', this.handleGlobalEvent);
-
-    client.on('joinRoom', this.handleNewUserJoinToRoom);
-
-    client.on('estimate', this.getEstimate);
-
-    client.on('startEstimate', () => {
-      Taro.navigateTo({
-        url: home,
-      });
-    });
-
-    client.on('disconnect', () => {
-      console.log('和服务器断开连接，请点击重连');
-    });
   }
 
   /**
@@ -62,7 +46,7 @@ export default class Hall extends Component {
     client.emit('createRoom', {}, ({ users, roomId }) => {
       console.log('created room', roomId);
       global.createRoom({ roomId, users });
-      Taro.navigateTo({
+      Taro.redirectTo({
         url: room,
       });
     });
@@ -88,7 +72,7 @@ export default class Hall extends Component {
         return;
       }
       // 跳转到房间
-      Taro.navigateTo({
+      Taro.redirectTo({
         url: room,
       });
     });

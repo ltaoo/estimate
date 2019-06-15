@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 
-import { home, resultPath } from '../constants';
+import { home, inputPath, resultPath } from '../constants';
 
 export default observable({
   // client
@@ -18,6 +18,11 @@ export default observable({
     client.on('leaveRoom', ({ user }) => {
       this.leaveRoom(user);
     });
+    client.on('startEstimate', () => {
+      Taro.redirectTo({
+        url: inputPath,
+      });
+    });
     client.on('estimate', ({ user, estimates }) => {
       console.log(`${user.username} give estimate`, estimates);
       // this.joinRoom(user, users);
@@ -27,7 +32,7 @@ export default observable({
       this.showEstimate = true;
     });
     client.on('showResult', () => {
-      Taro.navigateTo({
+      Taro.redirectTo({
         url: resultPath,
       });
     });
@@ -35,13 +40,16 @@ export default observable({
       this.estimate = undefined;
       this.estimates = [];
       this.showEstimate = false;
-      Taro.navigateTo({
-        url: home,
+      Taro.redirectTo({
+        url: inputPath,
       });
     });
     // 错误
     client.on('err', ({ message }) => {
       console.log('error', message);
+    });
+    client.on('disconnect', () => {
+      console.log('和服务器断开连接，请点击重连');
     });
   },
 

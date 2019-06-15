@@ -28,6 +28,8 @@ class App extends Component {
     pages: [
       'pages/index/index',
       'pages/login/index',
+      // 输入估时
+      'pages/input/index',
       // 估时点数
       'pages/estimate/index',
       // 估时结果

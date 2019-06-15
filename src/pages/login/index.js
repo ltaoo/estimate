@@ -35,7 +35,7 @@ export default class Login extends Component {
       });
       return;
     }
-    Taro.navigateTo({
+    Taro.redirectTo({
       url: hall,
     });
   }
