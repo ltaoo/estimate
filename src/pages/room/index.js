@@ -31,7 +31,9 @@ export default class Room extends Component {
    * 开始估时
    */
   startEstimate = () => {
-    const { global: { client, roomId } } = this.props;
+    const { global } = this.props;
+    const { client, roomId } = global;
+    global.startEstimate();
     client.emit('startEstimate', { roomId });
   }
 

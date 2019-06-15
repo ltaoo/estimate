@@ -4,3 +4,5 @@ export const home = '/';
 export const login = '/pages/login/index';
 export const hall = '/pages/hall/index';
 export const room = '/pages/room/index';
+export const estimate = '/pages/estimate/index';
+export const resultPath = '/pages/result/index';

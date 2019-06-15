@@ -10,6 +10,7 @@ import { observer, inject } from '@tarojs/mobx';
 
 import NumberBoard from './components/NumberBoard';
 import { checkLogin, redirectLogin } from '../../utils';
+import { estimate as estimatePath } from '../../constants';
 
 import './index.less'
 
@@ -32,11 +33,17 @@ export default class Index extends Component {
   }
 
   selectNumber = (value) => {
-    setTimeout(() => {
-      Taro.navigateTo({
-        url: `/pages/number/index?value=${value}`,
-      });
-    }, 200);
+    const { global } = this.props;
+    const { client, estimate, roomId } = global;
+    global.updateEstimate(value);
+    let action = 'estimate'
+    if (estimate !== undefined) {
+      action = 'updateEstimate';
+    }
+    client.emit(action, { value, roomId });
+    Taro.navigateTo({
+      url: estimatePath,
+    });
   }
 
   render () {

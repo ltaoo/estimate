@@ -28,7 +28,10 @@ class App extends Component {
     pages: [
       'pages/index/index',
       'pages/login/index',
-      'pages/number/index',
+      // 估时点数
+      'pages/estimate/index',
+      // 估时结果
+      'pages/result/index',
       // 大厅
       'pages/hall/index',
       // 房间

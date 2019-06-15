@@ -1,4 +1,7 @@
+import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
+
+import { resultPath } from '../constants';
 
 export default observable({
   // client
@@ -14,6 +17,19 @@ export default observable({
     });
     client.on('leaveRoom', ({ user }) => {
       this.leaveRoom(user);
+    });
+    client.on('estimate', ({ user, estimates }) => {
+      console.log(`${user.username} give estimate`, estimates);
+      // this.joinRoom(user, users);
+      this.estimates = estimates;
+    });
+    client.on('showEstimate', () => {
+      this.showEstimate = true;
+    });
+    client.on('showResult', () => {
+      Taro.navigateTo({
+        url: resultPath,
+      });
     });
     // 错误
     client.on('err', ({ message }) => {
@@ -44,5 +60,17 @@ export default observable({
   },
   leaveRoom(user) {
     this.users = this.users.filter(user => user.username !== user.username);
+  },
+
+  // estimate
+  estimate: undefined,
+  estimates: [],
+  showEstimate: false,
+  startEstimate() {
+    this.showEstimate = false;
+  },
+  updateEstimate(value) {
+    console.log(this);
+    this.estimate = value;
   },
 });
