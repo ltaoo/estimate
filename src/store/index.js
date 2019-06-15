@@ -12,4 +12,13 @@ export default observable({
   saveUsername(value) {
     this.username = value;
   },
+
+  // room
+  roomId: undefined,
+  createRoom(roomId) {
+    this.roomId = roomId;
+  },
+  updateRoomId(value) {
+    this.roomId = value;
+  },
 });

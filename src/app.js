@@ -30,7 +30,9 @@ class App extends Component {
       'pages/login/index',
       'pages/number/index',
       // 大厅
-      'pages/hall/index'
+      'pages/hall/index',
+      // 房间
+      'pages/room/index',
     ],
     window: {
       backgroundTextStyle: 'light',

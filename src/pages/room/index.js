@@ -8,6 +8,9 @@ import {
   AtInput,
 } from 'taro-ui';
 
+import withLogin from '../../utils/withLogin';
+
+@withLogin()
 export default class Room extends Component {
   constructor(props) {
     super(props);
@@ -35,4 +38,3 @@ export default class Room extends Component {
     );
   }
 }
-
