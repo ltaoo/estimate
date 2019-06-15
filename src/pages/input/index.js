@@ -40,6 +40,7 @@ export default class Index extends Component {
     if (estimate !== undefined) {
       action = 'updateEstimate';
     }
+    console.log('action', action);
     client.emit(action, { value, roomId });
     Taro.navigateTo({
       url: estimatePath,
