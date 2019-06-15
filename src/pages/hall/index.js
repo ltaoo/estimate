@@ -33,7 +33,7 @@ export default class Hall extends Component {
   connect = (username) => {
     const { global } = this.props;
     // 连接 socket.io
-    const client = io(socketUrl);
+    const client = io(`${socketUrl}?username=${username}`);
     global.createClient(client);
 
     client.on('global', this.handleGlobalEvent);
@@ -53,9 +53,9 @@ export default class Hall extends Component {
   createRoom = () => {
     const { global } = this.props;
     const { client } = global;
-    client.emit('createRoom', {}, ({ roomId }) => {
-      console.log('created room');
-      global.createRoom(roomId);
+    client.emit('createRoom', {}, ({ users, roomId }) => {
+      console.log('created room', roomId);
+      global.createRoom({ roomId, users });
       Taro.navigateTo({
         url: room,
       });

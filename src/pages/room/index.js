@@ -14,13 +14,10 @@ import withLogin from '../../utils/withLogin';
 export default class Room extends Component {
   constructor(props) {
     super(props);
-
-    const { username } = this.$router.params;
-    this.state = {
-      username,
-    };
   }
-
+  componentDidMount() {
+    // 监听
+  }
   /**
    * 开始估时
    */
@@ -30,9 +27,21 @@ export default class Room extends Component {
   }
 
   render() {
-    const { number, username } = this.state;
+    const { global: { roomId, users } } = this.props;
+    console.log(users);
     return (
       <View className="room-page">
+        <Text>房间ID: {roomId}</Text>
+        <View>
+          <View>
+            <Text>成员</Text>
+          </View>
+          {users.map(user => (
+            <View>
+              <Text>{user.admin ? '组长 - ' : ''}{user.username}</Text>
+            </View>
+          ))}
+        </View>
         <Button onClick={this.startEstimate}>开始</Button>
       </View>
     );
