@@ -24,8 +24,10 @@ export default class Result extends Component {
       return;
     }
   }
+
   restartEstimate = () => {
-    const { global } = this.props;
+    const { global: { client, roomId } } = this.props;
+    client.emit('restartEstimate', { roomId });
   }
 
 
@@ -61,7 +63,7 @@ export default class Result extends Component {
           </View>
         ))}
         {elm}
-        {isAdmin && <Button onClick={this.restartEstimate}>开始估时</Button>}
+        {isAdmin && <Button onClick={this.restartEstimate}>重新开始估时</Button>}
       </View>
     );
   }

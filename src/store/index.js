@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 
-import { resultPath } from '../constants';
+import { home, resultPath } from '../constants';
 
 export default observable({
   // client
@@ -29,6 +29,14 @@ export default observable({
     client.on('showResult', () => {
       Taro.navigateTo({
         url: resultPath,
+      });
+    });
+    client.on('restartEstimate', () => {
+      this.estimate = undefined;
+      this.estimates = [];
+      this.showEstimate = false;
+      Taro.navigateTo({
+        url: home,
       });
     });
     // 错误
