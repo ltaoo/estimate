@@ -7,25 +7,36 @@ import {
 import {
   AtInput,
   AtButton,
+  AtMessage,
 } from 'taro-ui';
+import { observer, inject } from '@tarojs/mobx';
 
+import { hall } from '../../constants';
 import './index.less';
 
+@inject('global')
+@observer
 export default class Login extends Component {
-  state = {
-    username: '',
+  config = {
+    navigationBarTitleText: '登录'
   }
 
   handleUsernameChange = (value) => {
-    this.setState({
-      username: value,
-    });
+    const { global } = this.props;
+    global.saveUsername(value);
   }
 
   login = () => {
-    const { username } = this.state;
+    const { global: { username } } = this.props;
+    if (username === '') {
+      Taro.atMessage({
+        type: 'error',
+        message: '请输入用户名称',
+      });
+      return;
+    }
     Taro.navigateTo({
-      url: `/?username=${username}`,
+      url: hall,
     });
   }
 
@@ -42,6 +53,7 @@ export default class Login extends Component {
             onChange={this.handleUsernameChange}
           />
           <AtButton className="login__btn" type="primary" onClick={this.login}>确认</AtButton>
+          <AtMessage />
         </View>
       </View>
     );

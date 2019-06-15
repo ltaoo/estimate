@@ -6,23 +6,28 @@ import {
   AtAvatar,
   AtButton,
 } from 'taro-ui'
+import { observer, inject } from '@tarojs/mobx';
 
 import NumberBoard from './components/NumberBoard';
+import { checkLogin, redirectLogin } from '../../utils';
 
 import './index.less'
 
+@inject('global')
+@observer
 export default class Index extends Component {
   config = {
     navigationBarTitleText: '首页'
   }
   constructor(props) {
     super(props);
+  }
 
-    const { username } = this.$router.params;
-    if (username === undefined) {
-      Taro.navigateTo({
-        url: `/pages/login/index`,
-      });
+  componentDidMount() {
+    const { global } = this.props;
+    if (!checkLogin(global)) {
+      redirectLogin();
+      return;
     }
   }
 

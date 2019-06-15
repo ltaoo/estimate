@@ -26,6 +26,9 @@
   "license": "MIT",
   "dependencies": {
     "@tarojs/components": "1.3.0",
+    "@tarojs/mobx": "^1.3.0",
+    "@tarojs/mobx-h5": "^1.3.0",
+    "@tarojs/mobx-rn": "^1.3.0",
     "@tarojs/router": "1.3.0",
     "@tarojs/taro": "1.3.0",
     "@tarojs/taro-alipay": "1.3.0",
@@ -33,8 +36,9 @@
     "@tarojs/taro-swan": "1.3.0",
     "@tarojs/taro-tt": "1.3.0",
     "@tarojs/taro-weapp": "1.3.0",
-    "nervjs": "^1.4.0",
-    "nerv-devtools": "^1.4.0"
+    "mobx": "^4.10.0",
+    "nerv-devtools": "^1.4.0",
+    "nervjs": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^16.4.6",

@@ -1,9 +1,11 @@
-import Taro, { Component } from '@tarojs/taro'
-import 'taro-ui/dist/style/index.scss'
+import Taro, { Component } from '@tarojs/taro';
+import 'taro-ui/dist/style/index.scss';
+import { Provider, onError } from '@tarojs/mobx';
 
-import Index from './pages/index'
+import Index from './pages/index';
+import globalStore from './store';
 
-import './app.less'
+import './app.less';
 import './public/iconfont.css';
 
 // 如果需要在 h5 环境中开启 React Devtools
@@ -12,6 +14,14 @@ import './public/iconfont.css';
 //   require('nerv-devtools')
 // }
 
+const store = {
+  global: globalStore,
+};
+
+onError(error => {
+  console.log('mobx global error listener:', error);
+});
+
 class App extends Component {
 
   config = {
@@ -19,7 +29,8 @@ class App extends Component {
       'pages/index/index',
       'pages/login/index',
       'pages/number/index',
-      'pages/room/index'
+      // 大厅
+      'pages/hall/index'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -41,9 +52,11 @@ class App extends Component {
   // 请勿修改此函数
   render () {
     return (
-      <Index />
+      <Provider store={store}>
+        <Index />
+      </Provider>
     )
   }
 }
 
-Taro.render(<App />, document.getElementById('app'))
+Taro.render(<App />, document.getElementById('app'));
