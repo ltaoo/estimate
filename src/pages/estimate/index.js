@@ -2,12 +2,16 @@ import Taro, { Component } from '@tarojs/taro';
 import {
   View,
   Text,
-  Button,
 } from '@tarojs/components';
+import {
+  AtButton,
+} from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
+import UserCard from '../../components/UserCard';
 import { checkLogin, redirectLogin } from '../../utils';
 import { resultPath } from '../../constants';
+
 import './index.less';
 
 @inject('global')
@@ -29,34 +33,20 @@ export default class Estimate extends Component {
   }
 
   render() {
-    const { global: {
-      username, users, roomId, estimate, estimates, showEstimate,
-    } } = this.props;
-
-    const owner = users.find(user => user.admin);
-    let isAdmin = false;
-    if (
-      owner
-      && owner.username === username
-      && owner.roomId === roomId
-    ) {
-      isAdmin = true;
-    }
-    console.log(username, isAdmin, roomId, owner);
+    const { global } = this.props;
+    const {
+      username, estimate, estimates, showEstimate,
+    } = global;
+    const isAdmintor = global.isAdmintor();
     const className = `iconfont icon-weitaoshuzi${estimate} number-card__text`;
+
     return (
       <View className="estimate-page">
-        <Text>{username}</Text>
-        <View className="number-card">
-          <span className={className} />
-        </View>
-        {estimates.filter(e => e.username !== username).map(item => (
-          <View>
-            <Text>{item.username}</Text>
-            <Text>给出了估时</Text>
-          </View>
+        <View className="number-card"><span className={className} /></View>
+        {estimates.filter(e => e.name !== username).map(item => (
+          <UserCard name={item.name} />
         ))}
-        {(isAdmin && showEstimate) && <Button onClick={this.showResult}>展示</Button>}
+        {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
       </View>
     );
   }

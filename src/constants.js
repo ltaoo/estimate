@@ -6,5 +6,5 @@ export const inputPath = '/pages/input/index';
 export const login = '/pages/login/index';
 export const hall = '/pages/hall/index';
 export const roomPath = '/pages/room/index';
-export const estimate = '/pages/estimate/index';
+export const estimatePath = '/pages/estimate/index';
 export const resultPath = '/pages/result/index';

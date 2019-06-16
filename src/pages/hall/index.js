@@ -11,7 +11,9 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
+import Card from '../../components/Card';
 import HeadCard from '../../components/HeadCard';
+import RoomCard from '../../components/RoomCard';
 import { socketUrl, roomPath } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
@@ -34,6 +36,18 @@ export default class Hall extends Component {
       return;
     }
     global.connect();
+  }
+
+  handleClickRoom = ({ title, status }) => {
+    if (status === 'CREATED') {
+      return;
+    }
+    const { global } = this.props;
+    global.joinRoom(title);
+    // @TODO 如果加入房间出错，就不应该继续跳转
+    Taro.redirectTo({
+      url: roomPath,
+    });
   }
 
   /**
@@ -69,7 +83,7 @@ export default class Hall extends Component {
       });
       return;
     }
-    global.joinRoom();
+    global.joinRoom(roomId);
     // @TODO 如果加入房间出错，就不应该继续跳转
     Taro.redirectTo({
       url: roomPath,
@@ -77,17 +91,29 @@ export default class Hall extends Component {
   }
 
   render() {
-    const { global: { username } } = this.props;
+    const { global: { rooms } } = this.props;
     return (
       <View className="hall-page">
         <HeadCard title="大厅" desc="加入已存在的房间或者创建房间" />
         <View className="hall-page__content">
-          <AtInput title="房间号" placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
-          <AtButton type="primary" onClick={this.joinRoom}>进入房间</AtButton>
-          <AtButton
-            type="secondary" className="btn--create-room"
-            onClick={this.createRoom}>创建房间
-          </AtButton>
+          <Card title="已有房间">
+            {rooms.map(room => (
+              <RoomCard
+                key={room.id}
+                title={room.id}
+                status={room.status}
+                onClick={this.handleClickRoom}
+              />
+            ))}
+          </Card>
+          <Card title="加入或者创建房间">
+            <AtInput title="房间号" placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
+            <AtButton type="primary" onClick={this.joinRoom}>进入房间</AtButton>
+            <AtButton
+              type="secondary" className="btn--create-room"
+              onClick={this.createRoom}>创建房间
+            </AtButton>
+          </Card>
         </View>
         <AtMessage />
       </View>

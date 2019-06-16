@@ -1,0 +1,30 @@
+.card {
+  margin-bottom: 20PX;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__header {
+    margin-bottom: 10PX;
+  }
+
+  &__title {
+    &::before {
+      display: inline-block;
+      content: "";
+      width: 6PX;
+      height: 21PX;
+      margin-right: 10PX;
+      vertical-align: sub;
+      background: #6190e8;
+    }
+
+    font-size: 32px;
+    color: #666;
+  }
+
+  &__content {
+
+  }
+}

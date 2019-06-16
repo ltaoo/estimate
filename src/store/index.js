@@ -7,11 +7,13 @@ import {
   roomPath,
   inputPath,
   resultPath,
+  estimatePath,
 } from '../constants';
 
 export default observable({
   // client
   client: null,
+  rooms: [],
   connect() {
     const { username } = this;
     // 连接 socket.io
@@ -29,6 +31,9 @@ export default observable({
         type: 'info',
         message: `${user.name} 进入了大厅`,
       });
+    });
+    client.on('getRooms', ({ rooms }) => {
+      this.rooms = rooms;
     });
     // 初始化监听
     client.on('joinRoom', ({ roomId, user, users }) => {
@@ -104,8 +109,8 @@ export default observable({
   updateRoomId(value) {
     this.roomId = value;
   },
-  joinRoom(user, users) {
-    const roomId = this.roomId;
+  joinRoom(id) {
+    const roomId = id || this.roomId;
     this.inRoom = true;
     this.client.emit('joinRoom', { roomId });
   },
@@ -121,8 +126,16 @@ export default observable({
     this.showEstimate = false;
   },
   updateEstimate(value) {
-    console.log(this);
     this.estimate = value;
+    const { roomId } = this;
+    let action = 'estimate'
+    // if (estimate !== undefined) {
+    //   action = 'updateEstimate';
+    // }
+    client.emit(action, { value, roomId });
+    Taro.navigateTo({
+      url: estimatePath,
+    });
   },
 
   isAdmintor() {
