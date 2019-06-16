@@ -44,9 +44,15 @@ export default class Room extends Component {
    */
   startEstimate = () => {
     const { global } = this.props;
-    const { client, roomId } = global;
+    const { client, roomId, users } = global;
+    if (users.length === 1) {
+      Taro.atMessage({
+        type: 'error',
+        message: '房间内只有一个成员',
+      });
+      return;
+    }
     global.startEstimate();
-    client.emit('startEstimate', { roomId });
   }
 
   render() {
@@ -68,7 +74,7 @@ export default class Room extends Component {
           {isAdmintor && (
             <View className="btn--start-estimate">
               <AtFab circle type="primary" onClick={this.startEstimate}>
-                <Text className='at-fab__icon at-icon at-icon-lightning-bolt'></Text>
+                <Text className="at-fab__icon at-icon at-icon-lightning-bolt"></Text>
               </AtFab>
             </View>
           )}

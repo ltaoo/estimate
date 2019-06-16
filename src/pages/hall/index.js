@@ -4,6 +4,7 @@ import {
   Text,
 } from '@tarojs/components';
 import {
+  AtFab,
   AtInput,
   AtMessage,
   AtButton,
@@ -35,10 +36,6 @@ export default class Hall extends Component {
     if (!checkLogin(global)) {
       redirectLogin();
       return;
-    }
-    // 从房间页面返回，会重新触发这里
-    if (!client) {
-      global.connect();
     }
   }
 
@@ -110,13 +107,14 @@ export default class Hall extends Component {
               />
             ))}
           </Card>
-          <Card title="加入或者创建房间">
+          <Card title="输入房间编号或创建房间">
             <AtInput title="房间号" placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
-            <AtButton type="primary" onClick={this.joinRoom}>进入房间</AtButton>
-            <AtButton
-              type="secondary" className="btn--create-room"
-              onClick={this.createRoom}>创建房间
-            </AtButton>
+            <AtButton onClick={this.joinRoom}>进入房间</AtButton>
+            <View className="btn--create-room">
+              <AtFab circle type="primary" onClick={this.createRoom}>
+                <Text className="at-fab__icon at-icon at-icon-add"></Text>
+              </AtFab>
+            </View>
           </Card>
         </View>
         <AtMessage />

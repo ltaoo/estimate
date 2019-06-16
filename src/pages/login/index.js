@@ -1,8 +1,6 @@
-import Taro, { Component } from '@tarojs/taro';
+import Taro from '@tarojs/taro';
 import {
   View,
-  Text,
-  Input,
 } from '@tarojs/components';
 import {
   AtInput,
@@ -11,14 +9,14 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
-import { hall } from '../../constants';
+import { hallPath } from '../../constants';
 import './index.less';
 
 @inject('global')
 @observer
-export default class Login extends Component {
+export default class Login extends Taro.Component {
   config = {
-    navigationBarTitleText: '登录'
+    navigationBarTitleText: '登录',
   }
 
   handleUsernameChange = (value) => {
@@ -27,7 +25,8 @@ export default class Login extends Component {
   }
 
   login = () => {
-    const { global: { username } } = this.props;
+    const { global } = this.props;
+    const { username } = global;
     if (username === '') {
       Taro.atMessage({
         type: 'error',
@@ -35,9 +34,13 @@ export default class Login extends Component {
       });
       return;
     }
-    Taro.redirectTo({
-      url: hall,
-    });
+    const user = global.login();
+    if (user) {
+      Taro.redirectTo({
+        url: hallPath,
+      });
+      Taro.setStorageSync('user', user);
+    }
   }
 
   render() {

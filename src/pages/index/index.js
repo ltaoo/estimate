@@ -5,9 +5,11 @@ import {
 import {
   AtAvatar,
   AtButton,
+  AtIcon,
 } from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
+import Spin from '../../components/Spin';
 import { checkLogin, redirectLogin } from '../../utils';
 
 import './index.less'
@@ -20,16 +22,16 @@ export default class Index extends Component {
   }
 
   componentDidMount() {
-    const { global } = this.props;
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
+    // const { global } = this.props;
+    // if (!checkLogin(global)) {
+    //   redirectLogin();
+    //   return;
+    // }
   }
 
   render () {
     return (
-      <View className='home-page'></View>
+      <View className='home-page'><Spin spining text="loading" /></View>
     )
   }
 }

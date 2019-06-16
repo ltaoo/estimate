@@ -1,9 +1,11 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 
+import User from '../domain/User';
 import {
   socketUrl,
   home,
+  hallPath,
   roomPath,
   inputPath,
   resultPath,
@@ -11,17 +13,15 @@ import {
 } from '../constants';
 
 export default observable({
+  init(data) {
+    const { user } = data;
+    this.user = user;
+  },
   // client
   client: null,
   rooms: [],
-  connect() {
-    const { username } = this;
-    // 连接 socket.io
-    const client = io(`${socketUrl}?username=${username}`);
-    this.createClient(client);
-  },
-  createClient(client) {
-    this.client = client;
+  addListeners() {
+    const { client } = this;
     client.on('newConnection', ({ user }) => {
       // 已经在房间，就不提示有谁进入了大厅
       if (this.inRoom) {
@@ -32,6 +32,7 @@ export default observable({
         message: `${user.name} 进入了大厅`,
       });
     });
+
     client.on('getRooms', ({ rooms }) => {
       this.rooms = rooms;
     });
@@ -95,7 +96,24 @@ export default observable({
   saveUsername(value) {
     this.username = value;
   },
-
+  login() {
+    const { username } = this;
+    // 连接 socket.io
+    try {
+      const client = io(`${socketUrl}?username=${username}`);
+      this.client = client;
+      this.addListeners();
+      const user = new User({
+        id: client.id,
+        name: username,
+      });
+      this.user = user;
+      return user;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
+  },
   // room
   roomId: undefined,
   inRoom: false,
@@ -127,7 +145,9 @@ export default observable({
   estimates: [],
   showEstimate: false,
   startEstimate() {
+    const { client, roomId } = this;
     this.showEstimate = false;
+    client.emit('startEstimate', { roomId });
   },
   updateEstimate(value) {
     this.estimate = value;
