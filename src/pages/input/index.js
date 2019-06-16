@@ -8,7 +8,7 @@ import {
 } from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
-import NumberBoard from './components/NumberBoard';
+import NumberBoard from '../../components/NumberBoard';
 import { checkLogin, redirectLogin } from '../../utils';
 import { estimate as estimatePath } from '../../constants';
 

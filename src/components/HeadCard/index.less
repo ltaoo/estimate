@@ -1,0 +1,28 @@
+.head-card {
+  padding: 12% 10%;
+  background: #f8f8f8;
+
+  &__title {
+    position: relative;
+    height: 80px;
+    line-height: 80px;
+    font-size: 48px;
+    font-weight: 700;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      display: inline-block;
+      width: 2.56rem;
+      height: 2PX;
+      border-radius: 1PX;
+      background-color: #6190e8;
+    }
+  }
+  &__desc {
+    font-size: 30px;
+    color: #999;
+  }
+}

@@ -8,7 +8,6 @@ import {
 } from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
-import NumberBoard from './components/NumberBoard';
 import { checkLogin, redirectLogin } from '../../utils';
 import { estimate as estimatePath } from '../../constants';
 
@@ -49,7 +48,6 @@ export default class Index extends Component {
   render () {
     return (
       <View className='home-page'>
-        <NumberBoard onClick={this.selectNumber} />
       </View>
     )
   }

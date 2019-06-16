@@ -2,6 +2,7 @@ import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 
 import {
+  socketUrl,
   home,
   roomPath,
   inputPath,
@@ -11,9 +12,14 @@ import {
 export default observable({
   // client
   client: null,
+  connect() {
+    const { username } = this;
+    // 连接 socket.io
+    const client = io(`${socketUrl}?username=${username}`);
+    this.createClient(client);
+  },
   createClient(client) {
     this.client = client;
-
     // 初始化监听
     client.on('joinRoom', ({ roomId, user, users }) => {
       console.log(`${user.name} join room, now member of room is`, users);
