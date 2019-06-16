@@ -32,6 +32,8 @@ export default observable({
     const { client } = this;
     client.on('recover', ({ user }) => {
       console.log('recover from localstorage', user.name);
+      const { joinedRoomId } = user;
+      this.joinRoom(joinedRoomId);
     });
     client.on('loginSuccess', ({ user }) => {
       console.log('login success', user.name);
@@ -58,6 +60,8 @@ export default observable({
     // 初始化监听
     client.on('joinRoom', ({ roomId, user, users }) => {
       console.log(`${user.name} join room, now member of room is`, users);
+      this.user = user;
+      Taro.setStorageSync('user', user);
       this.users = users;
       this.roomId = roomId;
       Taro.atMessage({
@@ -178,12 +182,12 @@ export default observable({
   },
 
   isAdmintor() {
-    const { roomId, username, users } = this;
+    const { roomId, user, users } = this;
     const owner = users.find(user => user.isAdmintor);
     let isAdmintor = false;
     if (
       owner
-      && owner.name === username
+      && owner.name === user.name
       && owner.createdRoomId === roomId
     ) {
       isAdmintor = true;

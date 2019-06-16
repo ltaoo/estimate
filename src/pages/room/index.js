@@ -25,8 +25,7 @@ export default class Room extends Component {
   }
   componentDidMount() {
     const { global } = this.props;
-    const { username } = global;
-
+    global.init();
     if (!checkLogin(global)) {
       redirectLogin();
       return;
@@ -34,7 +33,6 @@ export default class Room extends Component {
   }
 
   componentWillUnmount() {
-    console.log('unmount');
     const { global } = this.props;
     global.leaveRoom();
   }
