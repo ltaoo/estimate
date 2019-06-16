@@ -50,7 +50,7 @@ export default class Room extends Component {
 
     return (
       <View className="room-page">
-        <HeadCard title={title} desc="等待全部成员加入后开始估时" />
+        <HeadCard title={title} desc="等待全部成员加入后由组长开始估时" />
         <View className="room-page__content">
           <View>
             {users.map(user => (

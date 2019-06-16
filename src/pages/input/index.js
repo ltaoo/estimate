@@ -8,6 +8,7 @@ import {
 } from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
+import HeadCard from '../../components/HeadCard';
 import NumberBoard from '../../components/NumberBoard';
 import { checkLogin, redirectLogin } from '../../utils';
 import { estimate as estimatePath } from '../../constants';
@@ -49,8 +50,11 @@ export default class Index extends Component {
 
   render () {
     return (
-      <View className='home-page'>
-        <NumberBoard onClick={this.selectNumber} />
+      <View className='input-page'>
+        <HeadCard title="选择点数" desc="全部成员选择点数后展示结果" />
+        <View className="input-page__content">
+          <NumberBoard onClick={this.selectNumber} />
+        </View>
       </View>
     )
   }

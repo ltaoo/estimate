@@ -4,6 +4,8 @@ import {
 } from '@tarojs/components';
 import PropTypes from 'prop-types';
 
+import './index.less';
+
 const numbers = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
 
 export default class NumberBoard extends Taro.Component {
