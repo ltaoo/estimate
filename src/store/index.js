@@ -1,7 +1,12 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 
-import { home, inputPath, resultPath } from '../constants';
+import {
+  home,
+  roomPath,
+  inputPath,
+  resultPath,
+} from '../constants';
 
 export default observable({
   // client
@@ -62,9 +67,14 @@ export default observable({
   // room
   roomId: undefined,
   users: [],
-  createRoom({ roomId, users }) {
-    this.roomId = roomId;
-    this.users = users;
+  createRoom() {
+    this.client.emit('createRoom', {}, ({ roomId }) => {
+      console.log('created room', roomId);
+      this.roomId = roomId;
+      Taro.redirectTo({
+        url: roomPath,
+      });
+    });
   },
   updateRoomId(value) {
     this.roomId = value;

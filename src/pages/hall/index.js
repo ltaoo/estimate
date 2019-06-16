@@ -13,6 +13,8 @@ import { observer, inject } from '@tarojs/mobx';
 import { socketUrl, room, home } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
+import './index.less';
+
 @inject('global')
 @observer
 export default class Hall extends Component {
@@ -42,14 +44,7 @@ export default class Hall extends Component {
    */
   createRoom = () => {
     const { global } = this.props;
-    const { client } = global;
-    client.emit('createRoom', {}, ({ users, roomId }) => {
-      console.log('created room', roomId);
-      global.createRoom({ roomId, users });
-      Taro.redirectTo({
-        url: room,
-      });
-    });
+    global.createRoom();
   }
 
   handleRoomIdChange = (value) => {
@@ -62,7 +57,7 @@ export default class Hall extends Component {
     if (roomId === undefined) {
       Taro.atMessage({
         type: 'error',
-        message: '请输入用户名称',
+        message: '请输入房间号码',
       });
       return;
     }
@@ -83,9 +78,9 @@ export default class Hall extends Component {
     return (
       <View className="hall-page">
         <Text>欢迎: {username}</Text>
-        <Button onClick={this.createRoom}>创建房间</Button>
         <AtInput placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
         <Button type="primary" onClick={this.joinRoom}>进入房间</Button>
+        <Button className="btn--create-room" onClick={this.createRoom}>创建房间</Button>
         <AtMessage />
       </View>
     );
