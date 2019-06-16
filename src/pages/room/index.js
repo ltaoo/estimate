@@ -2,15 +2,19 @@ import Taro, { Component } from '@tarojs/taro';
 import {
   View,
   Text,
-  Button,
 } from '@tarojs/components';
 import {
+  AtMessage,
   AtInput,
+  AtButton,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
+import HeadCard from '../../components/HeadCard';
+import UserCard from '../../components/UserCard';
 import { checkLogin, redirectLogin } from '../../utils';
-import withLogin from '../../utils/withLogin';
+
+import './index.less';
 
 @inject('global')
 @observer
@@ -19,13 +23,13 @@ export default class Room extends Component {
     super(props);
   }
   componentDidMount() {
-    const { global } = this.props;
-    const { username } = global;
+    // const { global } = this.props;
+    // const { username } = global;
 
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
+    // if (!checkLogin(global)) {
+    //   redirectLogin();
+    //   return;
+    // }
   }
   /**
    * 开始估时
@@ -39,23 +43,33 @@ export default class Room extends Component {
 
   render() {
     const { global } = this.props;
-    const { roomId, users } = global;
+    const { roomId } = global;
     const isAdmintor = global.isAdmintor();
+
+    const users = [
+      {
+        name: '李涛',
+        isAdmintor: true,
+      },
+      {
+        name: '无涯',
+      },
+    ];
+
+    const title = `房间编号 ${roomId}`;
 
     return (
       <View className="room-page">
-        <Text>房间ID: {roomId}</Text>
-        <View>
+        <HeadCard title={title} desc="等待全部成员加入后开始估时" />
+        <View className="room-page__content">
           <View>
-            <Text>成员</Text>
+            {users.map(user => (
+              <UserCard isAdmintor={user.isAdmintor} name={user.name} />
+            ))}
           </View>
-          {users.map(user => (
-            <View>
-              <Text>{user.isAdmintor ? '组长 - ' : ''}{user.name}</Text>
-            </View>
-          ))}
+          {isAdmintor && <AtButton type="primary" onClick={this.startEstimate}>开始</AtButton>}
         </View>
-        {isAdmintor && <Button onClick={this.startEstimate}>开始</Button>}
+        <AtMessage />
       </View>
     );
   }

@@ -1,0 +1,49 @@
+.user-card {
+  display: flex;
+  border-radius: 5PX;
+  box-shadow: 2PX 2PX 8PX #eee;
+
+  margin-bottom: 10PX;
+
+  padding: 10PX;
+
+  background: #fff;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &__content {
+    display: flex;
+  }
+
+  &__extra {
+    padding: 20PX;
+  }
+
+  &__name {
+    position: relative;
+    margin-left: 30px;
+    font-size: 38px;
+    line-height: 55PX;
+
+    color: #666;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 10PX;
+      right: 0;
+      bottom: 14PX;
+      display: inline-block;
+      height: 14PX;
+      width: 136%;
+      border-radius: 1PX;
+      background-color: #6190e8;
+      opacity: 0.2;
+    }
+
+    &--admintor::after {
+      background-color: #13ce66;
+    }
+  }
+}

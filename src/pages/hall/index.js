@@ -73,7 +73,7 @@ export default class Hall extends Component {
     const { global: { username } } = this.props;
     return (
       <View className="hall-page">
-        <HeadCard title="大厅"></HeadCard>
+        <HeadCard title="大厅" desc="加入已存在的房间或者创建房间" />
         <View className="hall-page__content">
           <AtInput title="房间号" placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
           <AtButton type="primary" onClick={this.joinRoom}>进入房间</AtButton>

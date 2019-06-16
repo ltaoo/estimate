@@ -3,6 +3,7 @@
   background: #f8f8f8;
 
   &__title {
+    display: inline-block;
     position: relative;
     height: 80px;
     line-height: 80px;
@@ -13,15 +14,18 @@
       content: "";
       position: absolute;
       left: 0;
+      right: 0;
       bottom: 0;
       display: inline-block;
-      width: 2.56rem;
       height: 2PX;
+      width: 120%;
       border-radius: 1PX;
       background-color: #6190e8;
     }
   }
   &__desc {
+    display: block;
+    margin-top: 14px;
     font-size: 30px;
     color: #999;
   }
