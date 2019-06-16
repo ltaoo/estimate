@@ -31,6 +31,13 @@ export default class Room extends Component {
       return;
     }
   }
+
+  componentWillUnmount() {
+    console.log('unmount');
+    const { global } = this.props;
+    global.leaveRoom();
+  }
+
   /**
    * 开始估时
    */

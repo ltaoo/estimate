@@ -51,10 +51,13 @@ export default observable({
         type: 'info',
         message: `${user.name} 离开了房间`,
       });
-      this.leaveRoom(user, users);
+      this.users = users;
+    });
+    client.on('updateRooms', ({ rooms }) => {
+      this.rooms = rooms;
     });
     client.on('startEstimate', () => {
-      Taro.redirectTo({
+      Taro.navigateTo({
         url: inputPath,
       });
     });
@@ -66,7 +69,7 @@ export default observable({
       this.showEstimate = true;
     });
     client.on('showResult', () => {
-      Taro.redirectTo({
+      Taro.navigateTo({
         url: resultPath,
       });
     });
@@ -74,7 +77,7 @@ export default observable({
       this.estimate = undefined;
       this.estimates = [];
       this.showEstimate = false;
-      Taro.redirectTo({
+      Taro.navigateTo({
         url: inputPath,
       });
     });
@@ -101,7 +104,7 @@ export default observable({
     this.client.emit('createRoom', {}, ({ roomId }) => {
       console.log('created room', roomId);
       this.roomId = roomId;
-      Taro.redirectTo({
+      Taro.navigateTo({
         url: roomPath,
       });
     });
@@ -114,8 +117,9 @@ export default observable({
     this.inRoom = true;
     this.client.emit('joinRoom', { roomId });
   },
-  leaveRoom(user, users) {
-    this.users = users;
+  leaveRoom() {
+    const { client, username, roomId } = this;
+    client.emit('leaveRoom', { roomId });
   },
 
   // estimate

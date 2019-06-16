@@ -30,12 +30,16 @@ export default class Hall extends Component {
    */
   componentDidMount() {
     const { global } = this.props;
+    const { client } = global;
 
     if (!checkLogin(global)) {
       redirectLogin();
       return;
     }
-    global.connect();
+    // 从房间页面返回，会重新触发这里
+    if (!client) {
+      global.connect();
+    }
   }
 
   handleClickRoom = ({ title, status }) => {
@@ -45,7 +49,7 @@ export default class Hall extends Component {
     const { global } = this.props;
     global.joinRoom(title);
     // @TODO 如果加入房间出错，就不应该继续跳转
-    Taro.redirectTo({
+    Taro.navigateTo({
       url: roomPath,
     });
   }
@@ -56,7 +60,7 @@ export default class Hall extends Component {
   createRoom = () => {
     const { global } = this.props;
     global.createRoom();
-    Taro.redirectTo({
+    Taro.navigateTo({
       url: roomPath,
     });
   }
@@ -85,7 +89,7 @@ export default class Hall extends Component {
     }
     global.joinRoom(roomId);
     // @TODO 如果加入房间出错，就不应该继续跳转
-    Taro.redirectTo({
+    Taro.navigateTo({
       url: roomPath,
     });
   }
