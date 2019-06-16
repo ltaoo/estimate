@@ -3,7 +3,7 @@ import Taro from '@tarojs/taro';
 import { login } from '../constants';
 
 export function checkLogin(store) {
-  if (store.username !== undefined) {
+  if (store.user !== undefined) {
     return true;
   }
   return false;
