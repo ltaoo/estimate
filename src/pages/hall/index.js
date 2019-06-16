@@ -32,7 +32,7 @@ export default class Hall extends Component {
   componentDidMount() {
     const { global } = this.props;
     const { client } = global;
-
+    global.init();
     if (!checkLogin(global)) {
       redirectLogin();
       return;

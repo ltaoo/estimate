@@ -34,13 +34,8 @@ export default class Login extends Taro.Component {
       });
       return;
     }
-    const user = global.login();
-    if (user) {
-      Taro.redirectTo({
-        url: hallPath,
-      });
-      Taro.setStorageSync('user', user);
-    }
+    global.login();
+
   }
 
   render() {

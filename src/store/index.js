@@ -12,17 +12,36 @@ import {
   estimatePath,
 } from '../constants';
 
+const user = Taro.getStorageSync('user');
+
 export default observable({
-  init(data) {
-    const { user } = data;
-    this.user = user;
+  init() {
+    const { user, client } = this;
+    if (user && !client) {
+      this.connect(user.name);
+    }
   },
   // client
   client: null,
   rooms: [],
+  connect(username) {
+    this.client = io(`${socketUrl}?username=${username}`);
+    this.addListeners();
+  },
   addListeners() {
     const { client } = this;
-    client.on('newConnection', ({ user }) => {
+    client.on('recover', ({ user }) => {
+      console.log('recover from localstorage', user.name);
+    });
+    client.on('loginSuccess', ({ user }) => {
+      console.log('login success', user.name);
+      this.user = user;
+      Taro.redirectTo({
+        url: hallPath,
+      });
+      Taro.setStorageSync('user', user);
+    });
+    client.on('newConnection', ({ global, user }) => {
       // 已经在房间，就不提示有谁进入了大厅
       if (this.inRoom) {
         return;
@@ -92,6 +111,7 @@ export default observable({
   },
 
   // username
+  user,
   username: undefined,
   saveUsername(value) {
     this.username = value;
@@ -100,18 +120,9 @@ export default observable({
     const { username } = this;
     // 连接 socket.io
     try {
-      const client = io(`${socketUrl}?username=${username}`);
-      this.client = client;
-      this.addListeners();
-      const user = new User({
-        id: client.id,
-        name: username,
-      });
-      this.user = user;
-      return user;
+      this.connect(username);
     } catch (err) {
       console.log(err);
-      return null;
     }
   },
   // room
@@ -119,6 +130,10 @@ export default observable({
   inRoom: false,
   users: [],
   createRoom() {
+    if (!this.client) {
+      console.log('还未连接 socket ');
+      return;
+    }
     this.client.emit('createRoom', {}, ({ roomId }) => {
       console.log('created room', roomId);
       this.roomId = roomId;
