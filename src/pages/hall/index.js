@@ -47,13 +47,21 @@ export default class Hall extends Component {
     global.createRoom();
   }
 
+  /**
+   * 输入房间号
+   */
   handleRoomIdChange = (value) => {
     const { global } = this.props;
     global.updateRoomId(value);
   }
 
+  /**
+   * 加入指定房间
+   * @param {string} value - 房间 id
+   */
   joinRoom = () => {
-    const { global: { client, roomId } } = this.props;
+    const { global } = this.props;
+    const { client, roomId } = global;
     if (roomId === undefined) {
       Taro.atMessage({
         type: 'error',
@@ -61,16 +69,7 @@ export default class Hall extends Component {
       });
       return;
     }
-    client.emit('joinRoom', { roomId }, (err) => {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      // 跳转到房间
-      Taro.redirectTo({
-        url: room,
-      });
-    });
+    global.joinRoom();
   }
 
   render() {

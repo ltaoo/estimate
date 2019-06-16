@@ -15,10 +15,13 @@ export default observable({
     this.client = client;
 
     // 初始化监听
-    client.on('joinRoom', ({ user, users }) => {
-      console.log(`${user.username} join room, now member of room is`, users);
-      // this.joinRoom(user, users);
+    client.on('joinRoom', ({ roomId, user, users }) => {
+      console.log(`${user.name} join room, now member of room is`, users);
       this.users = users;
+      this.roomId = roomId;
+      Taro.redirectTo({
+        url: roomPath,
+      });
     });
     client.on('leaveRoom', ({ user }) => {
       this.leaveRoom(user);
@@ -80,9 +83,8 @@ export default observable({
     this.roomId = value;
   },
   joinRoom(user, users) {
-    console.log('call join room', user, users);
-    // this.users.push(user);
-    this.users = users;
+    const roomId = this.roomId;
+    this.client.emit('joinRoom', { roomId });
   },
   leaveRoom(user) {
     this.users = this.users.filter(user => user.username !== user.username);
@@ -98,5 +100,19 @@ export default observable({
   updateEstimate(value) {
     console.log(this);
     this.estimate = value;
+  },
+
+  isAdmintor() {
+    const { roomId, username, users } = this;
+    const owner = users.find(user => user.isAdmintor);
+    let isAdmintor = false;
+    if (
+      owner
+      && owner.name === username
+      && owner.createdRoomId === roomId
+    ) {
+      isAdmintor = true;
+    }
+    return isAdmintor;
   },
 });

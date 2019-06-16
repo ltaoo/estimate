@@ -38,16 +38,10 @@ export default class Room extends Component {
   }
 
   render() {
-    const { global: { username, roomId, users } } = this.props;
-    const owner = users.find(user => user.admin);
-    let isAdmin = false;
-    if (
-      owner
-      && owner.username === username
-      && owner.roomId === roomId
-    ) {
-      isAdmin = true;
-    }
+    const { global } = this.props;
+    const { roomId, users } = global;
+    const isAdmintor = global.isAdmintor();
+
     return (
       <View className="room-page">
         <Text>房间ID: {roomId}</Text>
@@ -57,11 +51,11 @@ export default class Room extends Component {
           </View>
           {users.map(user => (
             <View>
-              <Text>{user.admin ? '组长 - ' : ''}{user.username}</Text>
+              <Text>{user.isAdmintor ? '组长 - ' : ''}{user.name}</Text>
             </View>
           ))}
         </View>
-        {isAdmin && <Button onClick={this.startEstimate}>开始</Button>}
+        {isAdmintor && <Button onClick={this.startEstimate}>开始</Button>}
       </View>
     );
   }
