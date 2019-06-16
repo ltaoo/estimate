@@ -9,7 +9,6 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import { checkLogin, redirectLogin } from '../../utils';
-import { estimate as estimatePath } from '../../constants';
 
 import './index.less'
 
@@ -18,9 +17,6 @@ import './index.less'
 export default class Index extends Component {
   config = {
     navigationBarTitleText: '首页'
-  }
-  constructor(props) {
-    super(props);
   }
 
   componentDidMount() {
@@ -31,24 +27,9 @@ export default class Index extends Component {
     }
   }
 
-  selectNumber = (value) => {
-    const { global } = this.props;
-    const { client, estimate, roomId } = global;
-    global.updateEstimate(value);
-    let action = 'estimate'
-    if (estimate !== undefined) {
-      action = 'updateEstimate';
-    }
-    client.emit(action, { value, roomId });
-    Taro.navigateTo({
-      url: estimatePath,
-    });
-  }
-
   render () {
     return (
-      <View className='home-page'>
-      </View>
+      <View className='home-page'></View>
     )
   }
 }

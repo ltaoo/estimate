@@ -13,7 +13,7 @@ import { observer, inject } from '@tarojs/mobx';
 
 import Card from '../../components/Card';
 import HeadCard from '../../components/HeadCard';
-import RoomCard from '../../components/RoomCard';
+import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
 import { socketUrl, roomPath } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
@@ -43,7 +43,7 @@ export default class Hall extends Component {
   }
 
   handleClickRoom = ({ title, status }) => {
-    if (status === 'CREATED') {
+    if (status === ROOM_STATUS.STARTED) {
       return;
     }
     const { global } = this.props;

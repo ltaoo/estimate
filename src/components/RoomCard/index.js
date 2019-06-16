@@ -11,9 +11,9 @@ import {
 
 import './index.less';
 
-const ROOM_STATUS = {
+export const ROOM_STATUS = {
   ENABLE: 'ENABLE',
-  CREATED: 'CREATED',
+  STARTED: 'STARTED',
 };
 
 export default class RoomCard extends Taro.Component {
@@ -30,6 +30,7 @@ export default class RoomCard extends Taro.Component {
 
   render() {
     const { title, status, onClick } = this.props;
+    console.log(status);
     return (
       <View className="room-card" onClick={this.handleClick}>
         <View className="room-card__content">
@@ -37,7 +38,10 @@ export default class RoomCard extends Taro.Component {
         </View>
         <View>
           <View>
-            <AtIcon value="chevron-right" />
+            {status === ROOM_STATUS.ENABLE
+              ? <AtIcon value="chevron-right" />
+              : <Text className="room-card__tip">已开始估时</Text>
+            }
           </View>
         </View>
       </View>

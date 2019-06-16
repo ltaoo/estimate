@@ -7,6 +7,7 @@ import {
   AtMessage,
   AtInput,
   AtButton,
+  AtFab,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
@@ -64,7 +65,13 @@ export default class Room extends Component {
               <UserCard isAdmintor={user.isAdmintor} name={user.name} />
             ))}
           </View>
-          {isAdmintor && <AtButton type="primary" onClick={this.startEstimate}>开始</AtButton>}
+          {isAdmintor && (
+            <View className="btn--start-estimate">
+              <AtFab circle type="primary" onClick={this.startEstimate}>
+                <Text className='at-fab__icon at-icon at-icon-lightning-bolt'></Text>
+              </AtFab>
+            </View>
+          )}
         </View>
         <AtMessage />
       </View>
