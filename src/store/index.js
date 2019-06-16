@@ -20,6 +20,12 @@ export default observable({
   },
   createClient(client) {
     this.client = client;
+    client.on('newConnection', ({ user }) => {
+      Taro.atMessage({
+        type: 'info',
+        message: `${user.name} 进入了大厅`,
+      });
+    });
     // 初始化监听
     client.on('joinRoom', ({ roomId, user, users }) => {
       console.log(`${user.name} join room, now member of room is`, users);
