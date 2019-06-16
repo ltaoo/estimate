@@ -13,7 +13,6 @@ import './index.less';
 export default class UserCard extends Taro.Component {
   static propTypes = {
     name: PropTypes.string.isRequired,
-    // avatar: PropTypes.string.isRequired,
   }
 
   render() {

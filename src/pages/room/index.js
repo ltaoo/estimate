@@ -23,13 +23,13 @@ export default class Room extends Component {
     super(props);
   }
   componentDidMount() {
-    // const { global } = this.props;
-    // const { username } = global;
+    const { global } = this.props;
+    const { username } = global;
 
-    // if (!checkLogin(global)) {
-    //   redirectLogin();
-    //   return;
-    // }
+    if (!checkLogin(global)) {
+      redirectLogin();
+      return;
+    }
   }
   /**
    * 开始估时
@@ -43,18 +43,8 @@ export default class Room extends Component {
 
   render() {
     const { global } = this.props;
-    const { roomId } = global;
+    const { roomId, users } = global;
     const isAdmintor = global.isAdmintor();
-
-    const users = [
-      {
-        name: '李涛',
-        isAdmintor: true,
-      },
-      {
-        name: '无涯',
-      },
-    ];
 
     const title = `房间编号 ${roomId}`;
 

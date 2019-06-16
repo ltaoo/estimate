@@ -21,6 +21,10 @@ export default observable({
   createClient(client) {
     this.client = client;
     client.on('newConnection', ({ user }) => {
+      // 已经在房间，就不提示有谁进入了大厅
+      if (this.inRoom) {
+        return;
+      }
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 进入了大厅`,
@@ -31,12 +35,18 @@ export default observable({
       console.log(`${user.name} join room, now member of room is`, users);
       this.users = users;
       this.roomId = roomId;
-      Taro.redirectTo({
-        url: roomPath,
+      Taro.atMessage({
+        type: 'info',
+        message: `${user.name} 加入了房间`,
       });
     });
-    client.on('leaveRoom', ({ user }) => {
-      this.leaveRoom(user);
+    client.on('leaveRoom', ({ user, users }) => {
+      console.log(`${user.name} leave room`, users);
+      Taro.atMessage({
+        type: 'info',
+        message: `${user.name} 离开了房间`,
+      });
+      this.leaveRoom(user, users);
     });
     client.on('startEstimate', () => {
       Taro.redirectTo({
@@ -45,7 +55,6 @@ export default observable({
     });
     client.on('estimate', ({ user, estimates }) => {
       console.log(`${user.username} give estimate`, estimates);
-      // this.joinRoom(user, users);
       this.estimates = estimates;
     });
     client.on('showEstimate', () => {
@@ -81,6 +90,7 @@ export default observable({
 
   // room
   roomId: undefined,
+  inRoom: false,
   users: [],
   createRoom() {
     this.client.emit('createRoom', {}, ({ roomId }) => {
@@ -96,10 +106,11 @@ export default observable({
   },
   joinRoom(user, users) {
     const roomId = this.roomId;
+    this.inRoom = true;
     this.client.emit('joinRoom', { roomId });
   },
-  leaveRoom(user) {
-    this.users = this.users.filter(user => user.username !== user.username);
+  leaveRoom(user, users) {
+    this.users = users;
   },
 
   // estimate

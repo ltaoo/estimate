@@ -12,7 +12,7 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import HeadCard from '../../components/HeadCard';
-import { socketUrl, room, home } from '../../constants';
+import { socketUrl, roomPath } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
 import './index.less';
@@ -42,6 +42,9 @@ export default class Hall extends Component {
   createRoom = () => {
     const { global } = this.props;
     global.createRoom();
+    Taro.redirectTo({
+      url: roomPath,
+    });
   }
 
   /**
@@ -67,6 +70,10 @@ export default class Hall extends Component {
       return;
     }
     global.joinRoom();
+    // @TODO 如果加入房间出错，就不应该继续跳转
+    Taro.redirectTo({
+      url: roomPath,
+    });
   }
 
   render() {
