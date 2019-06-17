@@ -1,53 +1,47 @@
-import Taro, { Component } from '@tarojs/taro';
+import Taro, { Component } from '@tarojs/taro'
 import {
   View,
-  Text,
-} from '@tarojs/components';
+} from '@tarojs/components'
 import {
+  AtAvatar,
   AtButton,
-} from 'taro-ui';
+} from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
-import UserCard from '../../components/UserCard';
+import HeadCard from '../../components/HeadCard';
+import NumberBoard from '../../components/NumberBoard';
 import { checkLogin, redirectLogin } from '../../utils';
-import { resultPath } from '../../constants';
 
-import './index.less';
+import './index.less'
 
 @inject('global')
 @observer
-export default class Estimate extends Component {
+export default class Input extends Component {
+  config = {
+    navigationBarTitleText: '选择点数'
+  }
+
   componentDidMount() {
     const { global } = this.props;
-    const { username } = global;
-
     if (!checkLogin(global)) {
       redirectLogin();
       return;
     }
   }
 
-  showResult = () => {
-    const { global: { client, roomId } } = this.props;
-    client.emit('showResult', { roomId });
+  selectNumber = (value) => {
+    const { global } = this.props;
+    global.updateEstimate(value);
   }
 
-  render() {
-    const { global } = this.props;
-    const {
-      username, estimate, estimates, showEstimate,
-    } = global;
-    const isAdmintor = global.isAdmintor();
-    const className = `iconfont icon-weitaoshuzi${estimate} number-card__text`;
-
+  render () {
     return (
-      <View className="estimate-page">
-        <View className="number-card"><span className={className} /></View>
-        {estimates.filter(e => e.name !== username).map(item => (
-          <UserCard name={item.name} />
-        ))}
-        {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
+      <View className='input-page'>
+        <HeadCard title="选择点数" desc="选择需要的点数" />
+        <View className="input-page__content">
+          <NumberBoard onClick={this.selectNumber} />
+        </View>
       </View>
-    );
+    )
   }
 }

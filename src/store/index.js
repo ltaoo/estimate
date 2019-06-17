@@ -10,22 +10,35 @@ import {
   inputPath,
   resultPath,
   estimatePath,
+  offlineEstimatePath,
+  userPath,
 } from '../constants';
 
+const PATH_MAP = [
+  hallPath,
+  offlineEstimatePath,
+  userPath,
+];
 const user = Taro.getStorageSync('user');
 
 export default observable({
   init() {
     const { user, client } = this;
     if (user && !client) {
+      // 如果本地存在登录信息，并且还没有连接，就主动连接
       this.connect(user.name);
     }
   },
   // client
   client: null,
   rooms: [],
-  connect(username) {
-    this.client = io(`${socketUrl}?username=${username}`);
+  /**
+   *
+   * @param {string} username - 用户名
+   * @param {number} refresh - 是否刷新
+   */
+  connect(username, refresh) {
+    this.client = io(`${socketUrl}?username=${username}&refresh=${refresh}`);
     this.addListeners();
   },
   addListeners() {
@@ -43,6 +56,7 @@ export default observable({
       });
       Taro.setStorageSync('user', user);
     });
+    // 初始化监听
     client.on('newConnection', ({ global, user }) => {
       // 已经在房间，就不提示有谁进入了大厅
       if (this.inRoom) {
@@ -53,16 +67,19 @@ export default observable({
         message: `${user.name} 进入了大厅`,
       });
     });
-
     client.on('getRooms', ({ rooms }) => {
       this.rooms = rooms;
     });
-    // 初始化监听
-    client.on('joinRoom', ({ roomId, user, users }) => {
+    client.on('createRoomSuccess', ({ rooms }) => {
+      console.log('create room success');
+      this.rooms = rooms;
+    });
+    client.on('joinRoomSuccess', ({ roomId, user, users }) => {
       console.log(`${user.name} join room, now member of room is`, users);
       this.user = user;
       Taro.setStorageSync('user', user);
       this.users = users;
+      this.inRoom = true;
       this.roomId = roomId;
       Taro.atMessage({
         type: 'info',
@@ -107,7 +124,7 @@ export default observable({
     });
     // 错误
     client.on('err', ({ message }) => {
-      console.log('error', message);
+      console.log('服务端错误', message);
     });
     client.on('disconnect', () => {
       console.log('和服务器断开连接，请点击重连');
@@ -124,7 +141,7 @@ export default observable({
     const { username } = this;
     // 连接 socket.io
     try {
-      this.connect(username);
+      this.connect(username, 1);
     } catch (err) {
       console.log(err);
     }
@@ -138,20 +155,13 @@ export default observable({
       console.log('还未连接 socket ');
       return;
     }
-    this.client.emit('createRoom', {}, ({ roomId }) => {
-      console.log('created room', roomId);
-      this.roomId = roomId;
-      Taro.navigateTo({
-        url: roomPath,
-      });
-    });
+    this.client.emit('createRoom');
   },
   updateRoomId(value) {
     this.roomId = value;
   },
   joinRoom(id) {
     const roomId = id || this.roomId;
-    this.inRoom = true;
     this.client.emit('joinRoom', { roomId });
   },
   leaveRoom() {
@@ -193,5 +203,12 @@ export default observable({
       isAdmintor = true;
     }
     return isAdmintor;
+  },
+  currentTabBarIndex: 0,
+  changeTabBarIndex(index) {
+    this.currentTabBarIndex = index;
+    Taro.navigateTo({
+      url: PATH_MAP[index],
+    });
   },
 });

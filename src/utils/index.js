@@ -3,10 +3,10 @@ import Taro from '@tarojs/taro';
 import { login } from '../constants';
 
 export function checkLogin(store) {
-  if (store.user !== undefined) {
-    return true;
+  if (store.user === null || store.user === '') {
+    return false;
   }
-  return false;
+  return true;
 }
 
 export function redirectLogin() {

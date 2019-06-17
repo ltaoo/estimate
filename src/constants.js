@@ -6,11 +6,13 @@ export const home = '/';
 export const login = '/pages/login/index';
 // 大厅
 export const hallPath = '/pages/hall/index';
-// 房间
-export const roomPath = '/pages/room/index';
-// 输入点数
-export const inputPath = '/pages/input/index';
-// 查看点数
-export const estimatePath = '/pages/estimate/index';
-// 查看估时结果
-export const resultPath = '/pages/result/index';
+export const roomPath = '/pages/hall/room';
+// 估时
+export const inputPath = '/pages/estimate/index';
+export const estimatePath = '/pages/estimate/numbers';
+export const resultPath = '/pages/estimate/result';
+// 离线估时
+export const offlineEstimatePath = '/pages/offline/index';
+export const offlineEstimateCardPath = '/pages/offline/result';
+// 用户中心
+export const userPath = 'pages/user/index';

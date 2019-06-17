@@ -29,15 +29,17 @@ class App extends Component {
       'pages/index/index',
       'pages/login/index',
       // 输入估时
-      'pages/input/index',
-      // 估时点数
       'pages/estimate/index',
-      // 估时结果
-      'pages/result/index',
+      'pages/estimate/numbers',
+      'pages/estimate/result',
       // 大厅
       'pages/hall/index',
-      // 房间
-      'pages/room/index',
+      'pages/hall/room',
+      // 离线估时
+      'pages/offline/index',
+      'pages/offline/result',
+      // 个人中心
+      'pages/user/index',
     ],
     window: {
       backgroundTextStyle: 'light',

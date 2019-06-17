@@ -4,6 +4,7 @@ import {
   Text,
 } from '@tarojs/components';
 import {
+  AtTabBar,
   AtFab,
   AtInput,
   AtMessage,
@@ -91,8 +92,13 @@ export default class Hall extends Component {
     });
   }
 
+  handleClickTabBar = (value) => {
+    const { global } = this.props;
+    global.changeTabBarIndex(value);
+  }
+
   render() {
-    const { global: { rooms } } = this.props;
+    const { global: { currentTabBarIndex, rooms } } = this.props;
     return (
       <View className="hall-page">
         <HeadCard title="大厅" desc="加入已存在的房间或者创建房间" />
@@ -118,6 +124,16 @@ export default class Hall extends Component {
           </Card>
         </View>
         <AtMessage />
+        <AtTabBar
+          fixed
+          tabList={[
+            { iconType: 'home' },
+            { iconType: 'lightning-bolt' },
+            { iconType: 'user' }
+          ]}
+          onClick={this.handleClickTabBar}
+          current={currentTabBarIndex}
+        />
       </View>
     );
   }
