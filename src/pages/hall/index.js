@@ -16,7 +16,7 @@ import { observer, inject } from '@tarojs/mobx';
 import Card from '../../components/Card';
 import HeadCard from '../../components/HeadCard';
 import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
-import { socketUrl, roomPath } from '../../constants';
+import { socketUrl, tabList, roomPath } from '../../constants';
 import { checkLogin, redirectLogin } from '../../utils';
 
 import './index.less';
@@ -126,11 +126,7 @@ export default class Hall extends Component {
         <AtMessage />
         <AtTabBar
           fixed
-          tabList={[
-            { iconType: 'home' },
-            { iconType: 'lightning-bolt' },
-            { iconType: 'user' }
-          ]}
+          tabList={tabList}
           onClick={this.handleClickTabBar}
           current={currentTabBarIndex}
         />

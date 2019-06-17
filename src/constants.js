@@ -15,4 +15,10 @@ export const resultPath = '/pages/estimate/result';
 export const offlineEstimatePath = '/pages/offline/index';
 export const offlineEstimateCardPath = '/pages/offline/result';
 // 用户中心
-export const userPath = 'pages/user/index';
+export const userPath = '/pages/user/index';
+
+export const tabList = [
+  { iconType: 'home' },
+  { iconType: 'lightning-bolt' },
+  { iconType: 'user' }
+];

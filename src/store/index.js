@@ -205,10 +205,21 @@ export default observable({
     return isAdmintor;
   },
   currentTabBarIndex: 0,
+  /**
+   *
+   * @param {string|number} index - 下标或者 path
+   */
   changeTabBarIndex(index) {
-    this.currentTabBarIndex = index;
+    let nextIndex = index;
+    if (typeof index === 'string') {
+      nextIndex = PATH_MAP.indexOf(index);
+    }
+    if (nextIndex === this.currentTabBarIndex) {
+      return;
+    }
+    this.currentTabBarIndex = nextIndex;
     Taro.navigateTo({
-      url: PATH_MAP[index],
+      url: PATH_MAP[nextIndex],
     });
   },
 });
