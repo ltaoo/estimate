@@ -146,6 +146,10 @@ export default observable({
       console.log(err);
     }
   },
+  logout() {
+    const { client } = this;
+    client.emit('logout');
+  },
   // room
   roomId: undefined,
   inRoom: false,

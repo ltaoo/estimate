@@ -115,12 +115,8 @@ export default class Hall extends Component {
           </Card>
           <Card title="输入房间编号或创建房间">
             <AtInput title="房间号" placeholder="请输入房间号" onChange={this.handleRoomIdChange} />
-            <AtButton onClick={this.joinRoom}>进入房间</AtButton>
-            <View className="btn--create-room">
-              <AtFab circle type="primary" onClick={this.createRoom}>
-                <Text className="at-fab__icon at-icon at-icon-add"></Text>
-              </AtFab>
-            </View>
+            <AtButton type="primary" onClick={this.joinRoom}>进入房间</AtButton>
+            <AtButton className="btn--create-room" onClick={this.createRoom}>创建房间</AtButton>
           </Card>
         </View>
         <AtMessage />
