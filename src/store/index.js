@@ -58,7 +58,8 @@ export default observable({
       console.log('recover from localstorage', user.name);
       this.user = user;
       this.room = room;
-      if (user.joinedRoomId) {
+      const currentPath = Taro.getCurrentPages()[0].$router.path;
+      if (user.joinedRoomId && currentPath !== roomPath) {
         Taro.redirectTo({
           url: roomPath,
         });
@@ -159,8 +160,8 @@ export default observable({
       });
     });
     // 错误
-    client.on('err', ({ message }) => {
-      console.log('服务端错误', message);
+    client.on('err', ({ message, type }) => {
+      console.log('服务端错误', type, message);
     });
     client.on('disconnect', () => {
       console.log('和服务器断开连接，请点击重连');

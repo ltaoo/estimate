@@ -12,6 +12,7 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import HeadCard from '../../components/HeadCard';
+import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
 import { checkLogin, redirectLogin } from '../../utils';
 
@@ -60,16 +61,19 @@ export default class Room extends Component {
     const isAdmintor = global.isAdmintor();
 
     const title = `房间编号 ${joinedRoomId}`;
+    const memberNumberTitle = `当前共 ${room.members.length} 人`;
 
     return (
       <View className="room-page">
         <HeadCard title={title} desc="等待全部成员加入后由组长开始估时" />
         <View className="room-page__content">
-          <View>
-            {room.members.map(user => (
-              <UserCard isAdmintor={user.isAdmintor} name={user.name} />
-            ))}
-          </View>
+          <Card title={memberNumberTitle}>
+            <View>
+              {room.members.map(user => (
+                <UserCard isAdmintor={user.isAdmintor} name={user.name} />
+              ))}
+            </View>
+          </Card>
           {isAdmintor && (
             <View className="btn--start-estimate">
               <AtFab circle type="primary" onClick={this.startEstimate}>
