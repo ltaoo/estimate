@@ -25,6 +25,8 @@ export default class Estimate extends Component {
       redirectLogin();
       return;
     }
+
+    global.init();
   }
 
   showResult = () => {

@@ -1,9 +1,13 @@
+/**
+ * @file 选择点数
+ */
 import Taro, { Component } from '@tarojs/taro'
 import {
   View,
 } from '@tarojs/components'
 import {
   AtAvatar,
+  AtMessage,
   AtButton,
 } from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
@@ -27,6 +31,7 @@ export default class Input extends Component {
       redirectLogin();
       return;
     }
+    global.init();
   }
 
   selectNumber = (value) => {
@@ -41,6 +46,7 @@ export default class Input extends Component {
         <View className="input-page__content">
           <NumberBoard onClick={this.selectNumber} />
         </View>
+        <AtMessage />
       </View>
     )
   }

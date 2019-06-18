@@ -64,7 +64,11 @@ export default observable({
       this.user = user;
       this.room = room;
       const currentPath = Taro.getCurrentPages()[0].$router.path;
-      if (user.joinedRoomId && currentPath !== roomPath) {
+      if (
+        user.joinedRoomId
+        && user.estimating === false
+        && currentPath !== roomPath
+      ) {
         Taro.redirectTo({
           url: roomPath,
         });
@@ -112,6 +116,7 @@ export default observable({
     });
     client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success');
+      this.user = user;
       this.room = room;
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
@@ -139,9 +144,15 @@ export default observable({
         url: inputPath,
       });
     });
-    client.on('estimate', ({ user, estimates }) => {
-      console.log(`${user.username} give estimate`, estimates);
-      this.estimates = estimates;
+    client.on('estimate', ({ user, room }) => {
+      console.log(`${user.username} give estimate`);
+      this.estimates = room.members.map(member => {
+        return {
+          id: member.id,
+          name: member.name,
+          estimate: member.estimate,
+        };
+      });
     });
     client.on('showEstimate', () => {
       this.showEstimate = true;
@@ -221,12 +232,8 @@ export default observable({
   },
   updateEstimate(value) {
     this.estimate = value;
-    const { roomId } = this;
-    let action = 'estimate'
-    // if (estimate !== undefined) {
-    //   action = 'updateEstimate';
-    // }
-    client.emit(action, { value, roomId });
+    const { client } = this;
+    client.emit('estimate', { value });
     Taro.navigateTo({
       url: estimatePath,
     });
