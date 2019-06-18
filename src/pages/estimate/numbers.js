@@ -47,8 +47,9 @@ export default class Estimate extends Component {
     const isAdmintor = global.isAdmintor();
     const className = `iconfont icon-weitaoshuzi${user.estimate} number-card__text`;
     const estimates = room.members;
+    const estimatedMembers = estimates.filter(e => e.estimate !== null);
     const showEstimate = estimates.every(mem => mem.estimate !== null);
-    const title = `共 ${estimates.length} 人给出了估时`;
+    const title = `共 ${estimatedMembers.length} 人给出了估时`;
 
     return (
       <View className="estimate-page">
@@ -56,7 +57,7 @@ export default class Estimate extends Component {
         <View className="page__content">
           <Card title={title}>
             {estimates.filter(e => e.name !== user.name).map(item => (
-              <UserCard name={item.name} />
+              <UserCard name={item.name} estimate={item.estimate !== null} />
             ))}
           </Card>
           {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
