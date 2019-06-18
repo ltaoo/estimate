@@ -54,7 +54,7 @@ export default observable({
   addListeners() {
     const { client } = this;
     client.on('recoverSuccess', ({ user, room }) => {
-      console.log('recover from localstorage', user.name);
+      console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
         Taro.redirectTo({
           url: hallPath,
@@ -145,14 +145,8 @@ export default observable({
       });
     });
     client.on('estimate', ({ user, room }) => {
-      console.log(`${user.username} give estimate`);
-      this.estimates = room.members.map(member => {
-        return {
-          id: member.id,
-          name: member.name,
-          estimate: member.estimate,
-        };
-      });
+      console.log(`${user.name} give estimate`);
+      this.room = room;
     });
     client.on('showEstimate', () => {
       this.showEstimate = true;

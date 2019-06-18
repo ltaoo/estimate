@@ -1,3 +1,6 @@
+/**
+ * 点数卡片页
+ */
 import Taro, { Component } from '@tarojs/taro';
 import {
   View,
@@ -5,9 +8,11 @@ import {
 } from '@tarojs/components';
 import {
   AtButton,
+  AtMessage,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
+import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
 import { checkLogin, redirectLogin } from '../../utils';
 import { resultPath } from '../../constants';
@@ -37,18 +42,26 @@ export default class Estimate extends Component {
   render() {
     const { global } = this.props;
     const {
-      username, estimate, estimates, showEstimate,
+      user, room,
     } = global;
     const isAdmintor = global.isAdmintor();
-    const className = `iconfont icon-weitaoshuzi${estimate} number-card__text`;
+    const className = `iconfont icon-weitaoshuzi${user.estimate} number-card__text`;
+    const estimates = room.members;
+    const showEstimate = estimates.every(mem => mem.estimate !== null);
+    const title = `共 ${estimates.length} 人给出了估时`;
 
     return (
       <View className="estimate-page">
         <View className="number-card"><span className={className} /></View>
-        {estimates.filter(e => e.name !== username).map(item => (
-          <UserCard name={item.name} />
-        ))}
-        {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
+        <View className="page__content">
+          <Card title={title}>
+            {estimates.filter(e => e.name !== user.name).map(item => (
+              <UserCard name={item.name} />
+            ))}
+          </Card>
+          {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
+        </View>
+        <AtMessage />
       </View>
     );
   }
