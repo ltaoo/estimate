@@ -151,7 +151,7 @@ export default observable({
     client.on('showEstimate', () => {
       this.showEstimate = true;
     });
-    client.on('showResult', () => {
+    client.on('showEstimateResultSuccess', () => {
       Taro.navigateTo({
         url: resultPath,
       });
@@ -231,6 +231,10 @@ export default observable({
     Taro.navigateTo({
       url: estimatePath,
     });
+  },
+  showEstimateResult() {
+    const { client } = this;
+    client.emit('showEstimateResult');
   },
 
   isAdmintor() {

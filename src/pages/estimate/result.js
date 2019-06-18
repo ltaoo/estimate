@@ -9,6 +9,8 @@ import {
 } from '@tarojs/components';
 import { observer, inject } from '@tarojs/mobx';
 
+import HeadCard from '../../components/HeadCard';
+import Card from '../../components/Card';
 import { checkLogin, redirectLogin } from '../../utils';
 import { computeEstimates } from './utils';
 
@@ -23,47 +25,43 @@ export default class Result extends Component {
       redirectLogin();
       return;
     }
+    global.init();
   }
 
   restartEstimate = () => {
-    const { global: { client, roomId } } = this.props;
-    client.emit('restartEstimate', { roomId });
+    const { global } = this.props;
+    global.restartEstimate();
   }
 
-
   render() {
-    const { global: { users, username, roomId, estimates } } = this.props;
+    const { global } = this.props;
+    const { user, room } = global;
+    const estimates = room.members;
+    const isAdmintor = global.isAdmintor();
     const stat = computeEstimates(estimates);
     console.log(stat, estimates);
     const elm = estimates
       .sort((a, b) => {
-        return a.value - b.value;
+        return a.estimate - b.estimate;
       })
       .map(item => (
         <View>
-          <Text>{item.username}</Text>
-          <Text>{item.value}</Text>
+          <Text>{item.name}</Text>
+          <Text>{item.estimate}</Text>
         </View>
       ));
-    const owner = users.find(user => user.admin);
-    let isAdmin = false;
-    if (
-      owner
-      && owner.username === username
-      && owner.roomId === roomId
-    ) {
-      isAdmin = true;
-    }
     return (
       <View>
-        <Text>估时结果</Text>
-        {stat.map(s => (
-          <View>
-            <Text>{s.value}</Text>有<Text>{s.number}</Text>
-          </View>
-        ))}
-        {elm}
-        {isAdmin && <Button onClick={this.restartEstimate}>重新开始估时</Button>}
+        <HeadCard title="估时结果" desc="统计估时结果" />
+        <View className="page__content">
+          {stat.map(s => (
+            <View>
+              <Text>{s.value}</Text>有<Text>{s.number}</Text>
+            </View>
+          ))}
+          {elm}
+          {isAdmintor && <Button onClick={this.restartEstimate}>重新开始估时</Button>}
+        </View>
       </View>
     );
   }

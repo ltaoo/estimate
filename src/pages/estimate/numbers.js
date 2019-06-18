@@ -35,17 +35,17 @@ export default class Estimate extends Component {
   }
 
   showResult = () => {
-    const { global: { client, roomId } } = this.props;
-    client.emit('showResult', { roomId });
+    const { global } = this.props;
+    global.showEstimateResult();
   }
 
   render() {
     const { global } = this.props;
     const {
-      user, room,
+      user, room, estimate,
     } = global;
     const isAdmintor = global.isAdmintor();
-    const className = `iconfont icon-weitaoshuzi${user.estimate} number-card__text`;
+    const className = `iconfont icon-weitaoshuzi${estimate || user.estimate} number-card__text`;
     const estimates = room.members;
     const estimatedMembers = estimates.filter(e => e.estimate !== null);
     const showEstimate = estimates.every(mem => mem.estimate !== null);
