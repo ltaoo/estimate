@@ -54,8 +54,13 @@ export default observable({
   addListeners() {
     const { client } = this;
     client.on('recoverSuccess', ({ user, room }) => {
-      // 应该拿到新的用户信息替换原先的，但是用户信息也没啥用
       console.log('recover from localstorage', user.name);
+      if (user.joinedRoomId === null) {
+        Taro.redirectTo({
+          url: hallPath,
+        });
+        return;
+      }
       this.user = user;
       this.room = room;
       const currentPath = Taro.getCurrentPages()[0].$router.path;
@@ -105,27 +110,22 @@ export default observable({
     client.on('getRooms', ({ rooms }) => {
       this.rooms = rooms;
     });
-    client.on('createRoomSuccess', ({ rooms }) => {
+    client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success');
-      this.rooms = rooms;
+      this.room = room;
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} join room, now member of room is`, room);
-      Taro.setStorageSync('user', user);
-      this.user = user;
       this.room = room;
-      this.users = users;
-      // this.inRoom = true;
-      // this.roomId = roomId;
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 加入了房间`,
       });
     });
-    client.on('leaveRoom', ({ user }) => {
-      console.log(`${user.name} leave room`, users);
+    client.on('leaveRoom', ({ user, room }) => {
+      console.log(`${user.name} leave room`, room.members);
       this.user = user;
-      this.room = getInitialRoom();
+      this.room = room;
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 离开了房间`,
@@ -233,14 +233,9 @@ export default observable({
   },
 
   isAdmintor() {
-    const { roomId, user, users } = this;
-    const owner = users.find(user => user.isAdmintor);
+    const { user, room } = this;
     let isAdmintor = false;
-    if (
-      owner
-      && owner.name === user.name
-      && owner.createdRoomId === roomId
-    ) {
+    if (room.id === user.createdRoomId) {
       isAdmintor = true;
     }
     return isAdmintor;

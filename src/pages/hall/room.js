@@ -57,10 +57,11 @@ export default class Room extends Component {
   render() {
     const { global } = this.props;
     const { user, room } = global;
+    console.log('room page render', user, room);
     const { joinedRoomId } = user;
     const isAdmintor = global.isAdmintor();
 
-    const title = `房间编号 ${joinedRoomId}`;
+    const title = `房间编号 ${room.id}`;
     const memberNumberTitle = `当前共 ${room.members.length} 人`;
 
     return (
@@ -70,7 +71,7 @@ export default class Room extends Component {
           <Card title={memberNumberTitle}>
             <View>
               {room.members.map(user => (
-                <UserCard isAdmintor={user.isAdmintor} name={user.name} />
+                <UserCard isAdmintor={user.createdRoomId === room.id} name={user.name} />
               ))}
             </View>
           </Card>
