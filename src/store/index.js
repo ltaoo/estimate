@@ -15,6 +15,14 @@ import {
   userPath,
 } from '../constants';
 
+function getInitialRoom() {
+  const initialRoom = {
+    id: null,
+    members: [],
+  };
+  return initialRoom;
+}
+
 const PATH_MAP = [
   hallPath,
   offlineEstimatePath,
@@ -32,6 +40,7 @@ export default observable({
   },
   // client
   client: null,
+  room: getInitialRoom(),
   rooms: [],
   /**
    * 连接服务端
@@ -44,24 +53,42 @@ export default observable({
   },
   addListeners() {
     const { client } = this;
-    client.on('recoverSuccess', ({ user }) => {
+    client.on('recoverSuccess', ({ user, room }) => {
+      // 应该拿到新的用户信息替换原先的，但是用户信息也没啥用
       console.log('recover from localstorage', user.name);
-      const { joinedRoomId } = user;
-      this.joinRoom(joinedRoomId);
+      this.user = user;
+      this.room = room;
+      if (user.joinedRoomId) {
+        Taro.redirectTo({
+          url: roomPath,
+        });
+      }
     });
     client.on('loginSuccess', ({ user }) => {
       console.log('login success', user.name);
       this.user = user;
-      Taro.redirectTo({
-        url: hallPath,
+      Taro.atMessage({
+        type: 'success',
+        message: '登录成功',
       });
       Taro.setStorageSync('user', user);
+      setTimeout(() => {
+        Taro.redirectTo({
+          url: hallPath,
+        });
+      }, 800);
     });
     client.on('logoutSuccess', () => {
-      Taro.setStorageSync('user', null);
-      Taro.redirectTo({
-        url: loginPath,
+      Taro.removeStorageSync('user');
+      Taro.atMessage({
+        type: 'success',
+        message: '注销成功',
       });
+      setTimeout(() => {
+        Taro.redirectTo({
+          url: loginPath,
+        });
+      }, 800);
     });
     // 初始化监听
     client.on('newConnection', ({ global, user }) => {
@@ -81,25 +108,27 @@ export default observable({
       console.log('create room success');
       this.rooms = rooms;
     });
-    client.on('joinRoomSuccess', ({ roomId, user, users }) => {
-      console.log(`${user.name} join room, now member of room is`, users);
-      this.user = user;
+    client.on('joinRoomSuccess', ({ user, room }) => {
+      console.log(`${user.name} join room, now member of room is`, room);
       Taro.setStorageSync('user', user);
+      this.user = user;
+      this.room = room;
       this.users = users;
-      this.inRoom = true;
-      this.roomId = roomId;
+      // this.inRoom = true;
+      // this.roomId = roomId;
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 加入了房间`,
       });
     });
-    client.on('leaveRoom', ({ user, users }) => {
+    client.on('leaveRoom', ({ user }) => {
       console.log(`${user.name} leave room`, users);
+      this.user = user;
+      this.room = getInitialRoom();
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 离开了房间`,
       });
-      this.users = users;
     });
     client.on('updateRooms', ({ rooms }) => {
       this.rooms = rooms;

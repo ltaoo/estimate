@@ -35,7 +35,6 @@ export default class Login extends Taro.Component {
       return;
     }
     global.login();
-
   }
 
   render() {

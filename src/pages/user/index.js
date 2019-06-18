@@ -7,6 +7,7 @@ import {
   AtButton,
   AtTabBar,
   AtAvatar,
+  AtMessage,
   AtActionSheet,
   AtActionSheetItem,
 } from 'taro-ui';
@@ -88,6 +89,7 @@ export default class User extends Taro.Component {
           onClick={this.handleClickTabBar}
           current={currentTabBarIndex}
         />
+        <AtMessage />
       </View>
     );
   }

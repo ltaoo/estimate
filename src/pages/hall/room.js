@@ -55,17 +55,18 @@ export default class Room extends Component {
 
   render() {
     const { global } = this.props;
-    const { roomId, users } = global;
+    const { user, room } = global;
+    const { joinedRoomId } = user;
     const isAdmintor = global.isAdmintor();
 
-    const title = `房间编号 ${roomId}`;
+    const title = `房间编号 ${joinedRoomId}`;
 
     return (
       <View className="room-page">
         <HeadCard title={title} desc="等待全部成员加入后由组长开始估时" />
         <View className="room-page__content">
           <View>
-            {users.map(user => (
+            {room.members.map(user => (
               <UserCard isAdmintor={user.isAdmintor} name={user.name} />
             ))}
           </View>
