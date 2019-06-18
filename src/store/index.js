@@ -124,7 +124,7 @@ export default observable({
     });
     client.on('leaveRoom', ({ user, room }) => {
       console.log(`${user.name} leave room`, room.members);
-      this.user = user;
+      // this.user = user;
       this.room = room;
       Taro.atMessage({
         type: 'info',
@@ -235,7 +235,7 @@ export default observable({
   isAdmintor() {
     const { user, room } = this;
     let isAdmintor = false;
-    if (room.id === user.createdRoomId) {
+    if (room.id !== null && (room.id === user.createdRoomId)) {
       isAdmintor = true;
     }
     return isAdmintor;

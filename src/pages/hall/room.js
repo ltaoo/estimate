@@ -57,7 +57,7 @@ export default class Room extends Component {
   render() {
     const { global } = this.props;
     const { user, room } = global;
-    console.log('room page render', user, room);
+    console.log('room page render', user.createdRoomId, room.id);
     const { joinedRoomId } = user;
     const isAdmintor = global.isAdmintor();
 
