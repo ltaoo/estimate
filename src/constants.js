@@ -3,7 +3,7 @@ export const socketUrl = 'http://127.0.0.1:3000';
 
 export const home = '/';
 // 登录
-export const login = '/pages/login/index';
+export const loginPath = '/pages/login/index';
 // 大厅
 export const hallPath = '/pages/hall/index';
 export const roomPath = '/pages/hall/room';

@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro';
 
-import { login } from '../constants';
+import { loginPath } from '../constants';
 
 export function checkLogin(store) {
   if (store.user === null || store.user === '') {
@@ -11,6 +11,6 @@ export function checkLogin(store) {
 
 export function redirectLogin() {
   Taro.navigateTo({
-    url: login,
+    url: loginPath,
   });
 }

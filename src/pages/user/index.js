@@ -13,6 +13,7 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import HeadCard from '../../components/HeadCard';
+import { checkLogin, redirectLogin } from '../../utils';
 import { tabList } from '../../constants';
 
 import './index.less';
@@ -27,6 +28,12 @@ export default class User extends Taro.Component {
   componentDidMount() {
     const { path } = this.$router;
     const { global } = this.props;
+    const { client } = global;
+    global.init();
+    if (!checkLogin(global)) {
+      redirectLogin();
+      return;
+    }
     global.changeTabBarIndex(path);
   }
 

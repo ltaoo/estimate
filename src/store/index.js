@@ -5,6 +5,7 @@ import User from '../domain/User';
 import {
   socketUrl,
   home,
+  loginPath,
   hallPath,
   roomPath,
   inputPath,
@@ -33,7 +34,7 @@ export default observable({
   client: null,
   rooms: [],
   /**
-   *
+   * 连接服务端
    * @param {string} username - 用户名
    * @param {number} refresh - 是否刷新
    */
@@ -43,7 +44,7 @@ export default observable({
   },
   addListeners() {
     const { client } = this;
-    client.on('recover', ({ user }) => {
+    client.on('recoverSuccess', ({ user }) => {
       console.log('recover from localstorage', user.name);
       const { joinedRoomId } = user;
       this.joinRoom(joinedRoomId);
@@ -55,6 +56,12 @@ export default observable({
         url: hallPath,
       });
       Taro.setStorageSync('user', user);
+    });
+    client.on('logoutSuccess', () => {
+      Taro.setStorageSync('user', null);
+      Taro.redirectTo({
+        url: loginPath,
+      });
     });
     // 初始化监听
     client.on('newConnection', ({ global, user }) => {
