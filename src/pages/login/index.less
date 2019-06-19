@@ -2,8 +2,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60vh;
-  padding: 20px;
+  height: 100vh;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 80%;
+  }
 }
 
 .login__input--username {
@@ -12,4 +19,11 @@
 }
 .login__btn {
   margin-top: 30px;
+}
+
+.offline-mode__btn {
+  text-align: center;
+  font-size: 32px;
+  text-decoration: underline;
+  color: #85a5ff;
 }

@@ -292,4 +292,12 @@ export default observable({
       url: PATH_MAP[nextIndex],
     });
   },
+
+  switchOfflineMode() {
+    this.changeTabBarIndex(1);
+    this.offline = true;
+    Taro.navigateTo({
+      url: offlineEstimatePath,
+    });
+  },
 });
