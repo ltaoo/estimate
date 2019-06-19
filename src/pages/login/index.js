@@ -48,6 +48,7 @@ export default class Login extends Taro.Component {
     return (
       <View className='login-page'>
         <View className="login-page__wrapper">
+          <Text className="app__title">ESTIMATE</Text>
           <View>
             <AtInput
               className="login__input--username"

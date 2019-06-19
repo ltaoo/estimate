@@ -13,6 +13,30 @@
   }
 }
 
+.app__title {
+  position: relative;
+  &::before {
+    position: absolute;
+    right: 25PX;
+    top: -15PX;
+    content: "";
+    width: 120%;
+    height: 50PX;
+    background: #52c41a;
+    opacity: .3;
+  }
+  &::after {
+    position: absolute;
+    left: 25PX;
+    bottom: -15PX;
+    content: "";
+    width: 120%;
+    height: 50PX;
+    background: #85a5ff;
+    opacity: .3;
+  }
+}
+
 .login__input--username {
   margin-top: 120px;
   text-align: center;
