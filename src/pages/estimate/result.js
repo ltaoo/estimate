@@ -5,14 +5,19 @@ import Taro, { Component } from '@tarojs/taro';
 import {
   View,
   Text,
-  Button,
 } from '@tarojs/components';
+import {
+  AtMessage,
+  AtButton,
+} from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
 import HeadCard from '../../components/HeadCard';
 import Card from '../../components/Card';
 import { checkLogin, redirectLogin } from '../../utils';
 import { computeEstimates } from './utils';
+
+import './index.less';
 
 @inject('global')
 @observer
@@ -40,28 +45,34 @@ export default class Result extends Component {
     const isAdmintor = global.isAdmintor();
     const stat = computeEstimates(estimates);
     console.log(stat, estimates);
-    const elm = estimates
+    const estimateDetails = estimates
       .sort((a, b) => {
-        return a.estimate - b.estimate;
+        return b.estimate - a.estimate;
       })
       .map(item => (
-        <View>
-          <Text>{item.name}</Text>
-          <Text>{item.estimate}</Text>
+        <View className="result__detail">
+          <Text className="result__name">{item.name}</Text>
+          <Text className="result__value">{item.estimate}</Text>
         </View>
       ));
     return (
       <View>
         <HeadCard title="估时结果" desc="统计估时结果" />
         <View className="page__content">
-          {stat.map(s => (
-            <View>
-              <Text>{s.value}</Text>有<Text>{s.number}</Text>
-            </View>
-          ))}
-          {elm}
-          {isAdmintor && <Button onClick={this.restartEstimate}>重新开始估时</Button>}
+          <Card title="统计">
+            {stat.map(s => (
+              <View className="stats">
+                <span className={`iconfont icon-weitaoshuzi${s.value} stats__value`}></span>
+                <Text className="stats__num">{s.number}</Text>
+              </View>
+            ))}
+          </Card>
+          <Card title="详情">
+            {estimateDetails}
+          </Card>
+          {isAdmintor && <AtButton type="primary" onClick={this.restartEstimate}>重新开始估时</AtButton>}
         </View>
+        <AtMessage />
       </View>
     );
   }
