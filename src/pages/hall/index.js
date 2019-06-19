@@ -86,10 +86,6 @@ export default class Hall extends Component {
       return;
     }
     global.joinRoom(roomId);
-    // @TODO 如果加入房间出错，就不应该继续跳转
-    Taro.navigateTo({
-      url: roomPath,
-    });
   }
 
   handleClickTabBar = (value) => {

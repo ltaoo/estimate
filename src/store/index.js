@@ -126,6 +126,10 @@ export default observable({
         type: 'info',
         message: `${user.name} 加入了房间`,
       });
+
+      Taro.navigateTo({
+        url: roomPath,
+      });
     });
     client.on('leaveRoom', ({ user, room }) => {
       console.log(`${user.name} leave room`, room.members);
@@ -181,6 +185,10 @@ export default observable({
     // 错误
     client.on('err', ({ message, type }) => {
       console.log('服务端错误', type, message);
+      Taro.atMessage({
+        type: 'error',
+        message: message,
+      });
     });
     client.on('disconnect', () => {
       console.log('和服务器断开连接，请点击重连');
