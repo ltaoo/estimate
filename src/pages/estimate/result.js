@@ -9,6 +9,8 @@ import {
 import {
   AtMessage,
   AtButton,
+  AtActionSheet,
+  AtActionSheetItem,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
@@ -22,6 +24,10 @@ import './index.less';
 @inject('global')
 @observer
 export default class Result extends Component {
+  state = {
+    actionSheetVisible: false,
+  };
+
   componentDidMount() {
     const { global } = this.props;
     const { username } = global;
@@ -33,12 +39,31 @@ export default class Result extends Component {
     global.init();
   }
 
+  showActionSheet = () => {
+    const { actionSheetVisible } = this.state;
+    this.setState({
+      actionSheetVisible: !actionSheetVisible,
+    });
+  }
+
+  handleActionSheetClosed = () => {
+    this.setState({
+      actionSheetVisible: false,
+    });
+  }
+
   restartEstimate = () => {
     const { global } = this.props;
     global.restartEstimate();
   }
 
+  endEstimate = () => {
+    const { global } = this.props;
+    global.stopEstimate();
+  }
+
   render() {
+    const { actionSheetVisible } = this.state;
     const { global } = this.props;
     const { user, room } = global;
     const estimates = room.members;
@@ -70,7 +95,21 @@ export default class Result extends Component {
           <Card title="详情">
             {estimateDetails}
           </Card>
-          {isAdmintor && <AtButton type="primary" onClick={this.restartEstimate}>重新开始估时</AtButton>}
+          {isAdmintor && (
+            <View>
+              <AtButton type="primary" onClick={this.restartEstimate}>重新开始估时</AtButton>
+              <AtButton className="btn--stop-estimate" onClick={this.showActionSheet}>结束估时</AtButton>
+            </View>
+          )}
+          <AtActionSheet
+            isOpened={actionSheetVisible}
+            cancelText="取消"
+            onClose={this.handleActionSheetClosed}
+          >
+            <AtActionSheetItem onClick={this.endEstimate}>
+              <Text style={{ color: 'red' }}>结束估时</Text>
+            </AtActionSheetItem>
+          </AtActionSheet>
         </View>
         <AtMessage />
       </View>

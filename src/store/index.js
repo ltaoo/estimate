@@ -156,12 +156,26 @@ export default observable({
         url: resultPath,
       });
     });
-    client.on('restartEstimate', () => {
+    client.on('restartEstimateSuccess', () => {
+      console.log('restartEstimate');
       this.estimate = undefined;
-      this.estimates = [];
+      this.user.estimate = null;
       this.showEstimate = false;
-      Taro.navigateTo({
+      Taro.redirectTo({
         url: inputPath,
+      });
+    });
+    client.on('stopEstimateSuccess', () => {
+      console.log('stop estimate');
+      this.estimate = undefined;
+      this.user.estimate = null;
+      this.user.estimating = true;
+      this.user.joinedRoomId = null;
+      this.user.createdRoomId = null;
+      Taro.setStorageSync('user', this.user);
+      this.showEstimate = false;
+      Taro.redirectTo({
+        url: hallPath,
       });
     });
     // 错误
@@ -235,6 +249,13 @@ export default observable({
   showEstimateResult() {
     const { client } = this;
     client.emit('showEstimateResult');
+  },
+  restartEstimate() {
+    const { client } = this;
+    client.emit('restartEstimate');
+  },
+  stopEstimate() {
+    this.client.emit('stopEstimate');
   },
 
   isAdmintor() {
