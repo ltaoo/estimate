@@ -49,7 +49,7 @@ export default class Login extends Taro.Component {
       <View className='login-page'>
         <View className="login-page__wrapper">
           <Text className="app__title">ESTIMATE</Text>
-          <View>
+          <View className="login__form">
             <AtInput
               className="login__input--username"
               placeholder="请输入用户名"

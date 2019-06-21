@@ -2,12 +2,18 @@ import Taro, { Component } from '@tarojs/taro';
 import {
   View,
   Text,
+  Button,
 } from '@tarojs/components';
 import {
   AtMessage,
   AtInput,
   AtButton,
   AtFab,
+  AtIcon,
+  AtModal,
+  AtModalHeader,
+  AtModalContent,
+  AtModalAction,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
@@ -33,7 +39,30 @@ export default class Room extends Component {
     }
   }
 
+  // 主要是这里很麻烦
   componentWillUnmount() {
+    // const { global } = this.props;
+    // global.leaveRoom();
+  }
+
+  showLeaveRoomTipModal = () => {
+    this.setState({
+	leaveRoomTipModalVisible: true,
+    });
+  }
+
+  hideLeaveRoomTipModal = () => {
+    this.setState({
+	leaveRoomTipModalVisible: false,
+    });
+  }
+
+  handleLeaveRoom = () => {
+console.log('leave room');
+    this.showLeaveRoomTipModal();
+  }
+
+  leaveRoom = () => {
     const { global } = this.props;
     global.leaveRoom();
   }
@@ -55,6 +84,7 @@ export default class Room extends Component {
   }
 
   render() {
+    const { leaveRoomTipModalVisible } = this.state;
     const { global } = this.props;
     const { user, room } = global;
     console.log('room page render', user.createdRoomId, room.id);
@@ -63,10 +93,17 @@ export default class Room extends Component {
 
     const title = `房间编号 ${room.id}`;
     const memberNumberTitle = `当前共 ${room.members.length} 人`;
+const leaveRoomBtn = (
+	<View onClick={this.handleLeaveRoom}><AtIcon value="close" /></View>
+);
 
     return (
       <View className="room-page">
-        <HeadCard title={title} desc="等待全部成员加入后由组长开始估时" />
+        <HeadCard 
+		title={title} 
+		desc="等待全部成员加入后由组长开始估时" 
+		extra={leaveRoomBtn}
+	/>
         <View className="room-page__content">
           <Card title={memberNumberTitle}>
             <View>
@@ -83,6 +120,16 @@ export default class Room extends Component {
             </View>
           )}
         </View>
+	<AtModal
+	  isOpened={leaveRoomTipModalVisible}
+        >
+          <AtModalHeader>确认要离开房间吗？</AtModalHeader>
+          <AtModalContent>离开房间后会返回大厅，可重新进入其他房间</AtModalContent>
+          <AtModalAction>
+	    <Button onClick={this.hideLeaveRoomTipModal}>取消</Button>
+	    <Button type="primary" onClick={this.leaveRoom}>确认</Button>
+          </AtModalAction>
+	</AtModal>
         <AtMessage />
       </View>
     );

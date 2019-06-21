@@ -1,5 +1,5 @@
 // export const socketUrl = 'http://192.168.1.3:3000';
-export const socketUrl = 'http://127.0.0.1:3000';
+export const socketUrl = 'http://10.30.5.129:4000';
 
 export const home = '/';
 // 登录
