@@ -15,7 +15,6 @@ import { observer, inject } from '@tarojs/mobx';
 import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
 import { checkLogin, redirectLogin } from '../../utils';
-import { resultPath } from '../../constants';
 
 import './index.less';
 
@@ -24,7 +23,6 @@ import './index.less';
 export default class Estimate extends Component {
   componentDidMount() {
     const { global } = this.props;
-    const { username } = global;
 
     if (!checkLogin(global)) {
       redirectLogin();
@@ -52,9 +50,9 @@ export default class Estimate extends Component {
     const title = `共 ${estimatedMembers.length} 人给出了估时`;
 
     return (
-      <View className="estimate-page">
-        <View className="number-card"><span className={className} /></View>
-        <View className="page__content">
+      <View className='estimate-page'>
+        <View className='number-card'><Text className={className} /></View>
+        <View className='page__content'>
           <Card title={title}>
             {estimates.filter(e => e.name !== user.name).map(item => (
               <UserCard name={item.name} estimate={item.estimate !== null} />

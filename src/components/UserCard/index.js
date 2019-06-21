@@ -16,18 +16,17 @@ export default class UserCard extends Taro.Component {
   }
 
   render() {
-    const { name, isAdmintor, estimate, extra = null } = this.props;
+    const { name, isAdmintor, extra = null } = this.props;
     const nameClassName = isAdmintor ? 'user-card__name--admintor' : '';
     return (
-      <View className="user-card">
-        <View className="user-card__content">
-          <View className="user-card__avatar">
+      <View className='user-card'>
+        <View className='user-card__content'>
+          <View className='user-card__avatar'>
             <AtAvatar circle text={name}></AtAvatar>
           </View>
           <Text className={`user-card__name ${nameClassName}`}>{name}</Text>
         </View>
-        {/* <Text className="user-card__estimate">{estimate !== null ? '给出了估时' : '还未给出估时'}</Text> */}
-        <Text className="user-card__estimate">{extra}</Text>
+        <Text className='user-card__estimate'>{extra}</Text>
       </View>
     );
   }

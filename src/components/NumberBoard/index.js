@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro';
 import {
   View,
+  Text,
 } from '@tarojs/components';
 import PropTypes from 'prop-types';
 
@@ -24,17 +25,17 @@ export default class NumberBoard extends Taro.Component {
 
   render() {
     return (
-      <View className="numbers">
+      <View className='numbers'>
         {numbers.map(rows => {
           return (
-            <View className="at-row">
+            <View className='at-row'>
               {rows.map(number => {
                 return (
                   <View
                     onClick={this.handleClickNumber.bind(this, number)}
-                    className="at-col number__wrapper"
+                    className='at-col number__wrapper'
                   >
-                    <span className={`iconfont icon-weitaoshuzi${number} number__text`} />
+                    <Text className={`iconfont icon-weitaoshuzi${number} number__text`} />
                   </View>
                 );
               })}

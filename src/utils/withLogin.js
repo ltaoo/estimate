@@ -1,13 +1,13 @@
+import Taro from '@tarojs/taro';
 import { observer, inject } from '@tarojs/mobx';
 
 import { checkLogin, redirectLogin } from './index';
 
-export default (params) => {
+export default () => {
   return (Component) => {
     class HOC extends Taro.Component {
       componentDidMount() {
         const { global } = this.props;
-        const { username } = global;
 
         if (!checkLogin(global)) {
           redirectLogin();

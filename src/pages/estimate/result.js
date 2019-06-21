@@ -30,7 +30,6 @@ export default class Result extends Component {
 
   componentDidMount() {
     const { global } = this.props;
-    const { username } = global;
 
     if (!checkLogin(global)) {
       redirectLogin();
@@ -65,7 +64,7 @@ export default class Result extends Component {
   render() {
     const { actionSheetVisible } = this.state;
     const { global } = this.props;
-    const { user, room } = global;
+    const { room } = global;
     const estimates = room.members;
     const isAdmintor = global.isAdmintor();
     const stat = computeEstimates(estimates);
@@ -75,35 +74,35 @@ export default class Result extends Component {
         return b.estimate - a.estimate;
       })
       .map(item => (
-        <View className="result__detail">
-          <Text className="result__name">{item.name}</Text>
-          <Text className="result__value">{item.estimate}</Text>
+        <View key={item.name} className='result__detail'>
+          <Text className='result__name'>{item.name}</Text>
+          <Text className='result__value'>{item.estimate}</Text>
         </View>
       ));
     return (
       <View>
-        <HeadCard title="估时结果" desc="统计估时结果" />
-        <View className="page__content">
-          <Card title="统计">
+        <HeadCard title='估时结果' desc='统计估时结果' />
+        <View className='page__content'>
+          <Card title='统计'>
             {stat.map(s => (
-              <View className="stats">
-                <span className={`iconfont icon-weitaoshuzi${s.value} stats__value`}></span>
-                <Text className="stats__num">{s.number}</Text>
+              <View key={s.id} className='stats'>
+                <Text className={`iconfont icon-weitaoshuzi${s.value} stats__value`}></Text>
+                <Text className='stats__num'>{s.number}</Text>
               </View>
             ))}
           </Card>
-          <Card title="详情">
+          <Card title='详情'>
             {estimateDetails}
           </Card>
           {isAdmintor && (
             <View>
-              <AtButton type="primary" onClick={this.restartEstimate}>重新开始估时</AtButton>
-              <AtButton className="btn--stop-estimate" onClick={this.showActionSheet}>结束估时</AtButton>
+              <AtButton type='primary' onClick={this.restartEstimate}>重新开始估时</AtButton>
+              <AtButton className='btn--stop-estimate' onClick={this.showActionSheet}>结束估时</AtButton>
             </View>
           )}
           <AtActionSheet
             isOpened={actionSheetVisible}
-            cancelText="取消"
+            cancelText='取消'
             onClose={this.handleActionSheetClosed}
           >
             <AtActionSheetItem onClick={this.endEstimate}>

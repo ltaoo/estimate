@@ -15,11 +15,11 @@ export default class Card extends Taro.Component {
   render() {
     const { title, children } = this.props;
     return (
-      <View className="card">
-        <View className="card__header">
-          {title && <Text className="card__title">{title}</Text>}
+      <View className='card'>
+        <View className='card__header'>
+          {title && <Text className='card__title'>{title}</Text>}
         </View>
-        <View className="card__content">{children}</View>
+        <View className='card__content'>{children}</View>
       </View>
     );
   }

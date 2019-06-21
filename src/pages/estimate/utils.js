@@ -5,10 +5,13 @@ export const computeEstimates = (estimates) => {
     res[b.estimate] += 1;
     return res;
   }, {});
-  return Object.keys(result).map(val => {
+  return Object.keys(result).map((val, i) => {
     return {
+      id: i,
       value: val,
       number: result[val],
     };
   });
 }
+
+export function noop() {}

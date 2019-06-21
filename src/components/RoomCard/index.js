@@ -6,7 +6,6 @@ import {
 import PropTypes from 'prop-types';
 import {
   AtIcon,
-  AtAvatar,
 } from 'taro-ui';
 
 import './index.less';
@@ -29,18 +28,18 @@ export default class RoomCard extends Taro.Component {
   }
 
   render() {
-    const { title, status, onClick } = this.props;
+    const { title, status } = this.props;
     console.log(status);
     return (
-      <View className="room-card" onClick={this.handleClick}>
-        <View className="room-card__content">
-          <Text className="room-card__title">{title}</Text>
+      <View className='room-card' onClick={this.handleClick}>
+        <View className='room-card__content'>
+          <Text className='room-card__title'>{title}</Text>
         </View>
         <View>
           <View>
             {status === ROOM_STATUS.ENABLE
-              ? <AtIcon value="chevron-right" />
-              : <Text className="room-card__tip">已开始估时</Text>
+              ? <AtIcon value='chevron-right' />
+              : <Text className='room-card__tip'>已开始估时</Text>
             }
           </View>
         </View>

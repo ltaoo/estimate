@@ -1,7 +1,6 @@
 import Taro from '@tarojs/taro';
 import {
   View,
-  Text,
 } from '@tarojs/components';
 import {
   AtTabBar,
@@ -10,7 +9,8 @@ import { observer, inject } from '@tarojs/mobx';
 
 import NumberBoard from '../../components/NumberBoard';
 import HeadCard from '../../components/HeadCard';
-import { tabList, offlineEstimateCardPath } from '../../constants';
+import { tabList } from '../../constants';
+import { offlineEstimateCardPath } from '../../constants/paths';
 
 @inject('global')
 @observer
@@ -36,8 +36,8 @@ export default class OfflineEstimate extends Taro.Component {
     const { global: { currentTabBarIndex } } = this.props;
     return (
       <View>
-        <HeadCard title="离线估时" desc="点击后会以卡片展示点数" />
-        <View className="page__content">
+        <HeadCard title='离线估时' desc='点击后会以卡片展示点数' />
+        <View className='page__content'>
           <NumberBoard onClick={this.handleSelectNumber} />
         </View>
         <AtTabBar

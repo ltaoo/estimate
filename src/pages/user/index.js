@@ -29,7 +29,6 @@ export default class User extends Taro.Component {
   componentDidMount() {
     const { path } = this.$router;
     const { global } = this.props;
-    const { client } = global;
     global.init();
     if (!checkLogin(global)) {
       redirectLogin();
@@ -66,17 +65,17 @@ export default class User extends Taro.Component {
     const { global: { user, currentTabBarIndex } } = this.props;
     return (
       <View>
-        <HeadCard title="用户中心" desc="修改用户名或者注销" />
-        <View className="page__content">
-          <View className="user__avatar-wrapper">
-            <AtAvatar size="large" className="user__avatar user__avatar--large" circle text={user.name}></AtAvatar>
-            <Text className="user__name">{user.name}</Text>
+        <HeadCard title='用户中心' desc='修改用户名或者注销' />
+        <View className='page__content'>
+          <View className='user__avatar-wrapper'>
+            <AtAvatar size='large' className='user__avatar user__avatar--large' circle text={user.name}></AtAvatar>
+            <Text className='user__name'>{user.name}</Text>
           </View>
-          <AtButton type="danger" onClick={this.showActionSheet}>注销</AtButton>
+          <AtButton type='danger' onClick={this.showActionSheet}>注销</AtButton>
         </View>
         <AtActionSheet
           isOpened={actionSheetVisible}
-          cancelText="取消"
+          cancelText='取消'
           onClose={this.handleActionSheetClosed}
         >
           <AtActionSheetItem onClick={this.logout}>

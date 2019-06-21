@@ -10,7 +10,6 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
-import { hallPath } from '../../constants';
 import './index.less';
 
 @inject('global')
@@ -47,19 +46,19 @@ export default class Login extends Taro.Component {
     const { username } = this.state;
     return (
       <View className='login-page'>
-        <View className="login-page__wrapper">
-          <Text className="app__title">ESTIMATE</Text>
-          <View className="login__form">
+        <View className='login-page__wrapper'>
+          <Text className='app__title'>ESTIMATE</Text>
+          <View className='login__form'>
             <AtInput
-              className="login__input--username"
-              placeholder="请输入用户名"
-              type="text"
+              className='login__input--username'
+              placeholder='请输入用户名'
+              type='text'
               value={username}
               onChange={this.handleUsernameChange}
             />
-            <AtButton className="login__btn" type="primary" onClick={this.login}>确认</AtButton>
+            <AtButton className='login__btn' type='primary' onClick={this.login}>确认</AtButton>
           </View>
-          <Text className="offline-mode__btn" onClick={this.switchOfflineMode}>离线模式</Text>
+          <Text className='offline-mode__btn' onClick={this.switchOfflineMode}>离线模式</Text>
         </View>
         <AtMessage />
       </View>

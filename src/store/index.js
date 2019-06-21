@@ -29,10 +29,9 @@ const PATH_MAP = [
   offlineEstimatePath,
   userPath,
 ];
-const user = Taro.getStorageSync('user');
-
 export default observable({
   init() {
+    const user = Taro.getStorageSync('user');
     const { client } = this;
     if (user && !client) {
       // 如果本地存在登录信息，并且还没有连接，就主动连接
@@ -53,7 +52,7 @@ export default observable({
     this.addListeners();
   },
   addListeners() {
-    const { client } = this;
+    const { client, user } = this;
     client.on('recoverSuccess', ({ room = getInitialRoom() }) => {
       console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
@@ -197,7 +196,7 @@ export default observable({
   },
 
   // username
-  user,
+  user: null,
   username: undefined,
   saveUsername(value) {
     this.username = value;
@@ -268,7 +267,7 @@ export default observable({
   },
 
   isAdmintor() {
-    const { room } = this;
+    const { room, user } = this;
     let isAdmintor = false;
     if (room.id !== null && (room.id === user.createdRoomId)) {
       isAdmintor = true;
