@@ -1,10 +1,11 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
+import io from 'socket.io-client';
 
-import User from '../domain/User';
 import {
   socketUrl,
-  home,
+} from '../constants';
+import {
   loginPath,
   hallPath,
   roomPath,
@@ -13,7 +14,7 @@ import {
   estimatePath,
   offlineEstimatePath,
   userPath,
-} from '../constants';
+} from '../constants/paths';
 
 function getInitialRoom() {
   const initialRoom = {
@@ -32,7 +33,7 @@ const user = Taro.getStorageSync('user');
 
 export default observable({
   init() {
-    const { user, client } = this;
+    const { client } = this;
     if (user && !client) {
       // 如果本地存在登录信息，并且还没有连接，就主动连接
       this.connect(user.name);
@@ -53,7 +54,7 @@ export default observable({
   },
   addListeners() {
     const { client } = this;
-    client.on('recoverSuccess', ({ user, room = getInitialRoom() }) => {
+    client.on('recoverSuccess', ({ room = getInitialRoom() }) => {
       console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
         Taro.redirectTo({
@@ -74,7 +75,7 @@ export default observable({
         });
       }
     });
-    client.on('loginSuccess', ({ user }) => {
+    client.on('loginSuccess', () => {
       console.log('login success', user.name);
       this.user = user;
       Taro.atMessage({
@@ -101,7 +102,7 @@ export default observable({
       }, 800);
     });
     // 初始化监听
-    client.on('newConnection', ({ global, user }) => {
+    client.on('newConnection', () => {
       // 已经在房间，就不提示有谁进入了大厅
       if (this.inRoom) {
         return;
@@ -114,12 +115,12 @@ export default observable({
     client.on('getRooms', ({ rooms }) => {
       this.rooms = rooms;
     });
-    client.on('createRoomSuccess', ({ user, room }) => {
+    client.on('createRoomSuccess', ({ room }) => {
       console.log('create room success');
       this.user = user;
       this.room = room;
     });
-    client.on('joinRoomSuccess', ({ user, room }) => {
+    client.on('joinRoomSuccess', ({ room }) => {
       console.log(`${user.name} join room, now member of room is`, room);
       this.room = room;
       Taro.atMessage({
@@ -131,7 +132,7 @@ export default observable({
         url: roomPath,
       });
     });
-    client.on('leaveRoom', ({ user, room }) => {
+    client.on('leaveRoom', ({ room }) => {
       console.log(`${user.name} leave room`, room.members);
       // this.user = user;
       this.room = room;
@@ -148,7 +149,7 @@ export default observable({
         url: inputPath,
       });
     });
-    client.on('estimate', ({ user, room }) => {
+    client.on('estimate', ({ room }) => {
       console.log(`${user.name} give estimate`);
       this.room = room;
     });
@@ -233,7 +234,7 @@ export default observable({
     this.client.emit('joinRoom', { roomId });
   },
   leaveRoom() {
-    const { client, username, roomId } = this;
+    const { client, roomId } = this;
     client.emit('leaveRoom', { roomId });
   },
 
@@ -267,7 +268,7 @@ export default observable({
   },
 
   isAdmintor() {
-    const { user, room } = this;
+    const { room } = this;
     let isAdmintor = false;
     if (room.id !== null && (room.id === user.createdRoomId)) {
       isAdmintor = true;

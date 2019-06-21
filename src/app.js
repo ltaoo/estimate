@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro';
-import 'taro-ui/dist/style/index.scss';
 import { Provider, onError } from '@tarojs/mobx';
+import 'taro-ui/dist/style/index.scss';
 
 import Index from './pages/index';
 import globalStore from './store';
@@ -25,6 +25,7 @@ onError(error => {
 class App extends Component {
 
   config = {
+    // 这些不能用常量替换
     pages: [
       'pages/index/index',
       'pages/login/index',

@@ -1,6 +1,6 @@
 import Taro from '@tarojs/taro';
 
-import { loginPath } from '../constants';
+import { loginPath } from '../constants/paths';
 
 export function checkLogin(store) {
   if (store.user === null || store.user === '') {

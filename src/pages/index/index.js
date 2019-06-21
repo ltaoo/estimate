@@ -2,16 +2,11 @@ import Taro, { Component } from '@tarojs/taro'
 import {
   View,
 } from '@tarojs/components'
-import {
-  AtAvatar,
-  AtButton,
-  AtIcon,
-} from 'taro-ui'
 import { observer, inject } from '@tarojs/mobx';
 
 import Spin from '../../components/Spin';
-import { hallPath } from '../../constants';
-import { checkLogin, redirectLogin } from '../../utils';
+import { hallPath } from '../../constants/paths';
+import { redirectLogin } from '../../utils';
 
 import './index.less'
 
@@ -40,7 +35,7 @@ export default class Index extends Component {
 
   render () {
     return (
-      <View className='home-page'><Spin spining text="loading" /></View>
+      <View className='home-page'><Spin spining text='loading' /></View>
     )
   }
 }
