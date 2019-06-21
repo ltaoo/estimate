@@ -53,7 +53,7 @@ export default observable({
   },
   addListeners() {
     const { client } = this;
-    client.on('recoverSuccess', ({ user, room }) => {
+    client.on('recoverSuccess', ({ user, room = getInitialRoom() }) => {
       console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
         Taro.redirectTo({
@@ -291,6 +291,15 @@ export default observable({
     Taro.navigateTo({
       url: PATH_MAP[nextIndex],
     });
+  },
+
+  checkHasRoom() {
+    const { room } = this;
+    if (room === null) {
+      Taro.navigateTo({
+	url: hallPath,
+      });
+    }
   },
 
   switchOfflineMode() {

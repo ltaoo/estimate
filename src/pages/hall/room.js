@@ -29,6 +29,10 @@ import './index.less';
 export default class Room extends Component {
   constructor(props) {
     super(props);
+    
+    const { global } = props;
+    console.log(global.room);
+    global.checkHasRoom();
   }
   componentDidMount() {
     const { global } = this.props;
@@ -87,22 +91,22 @@ console.log('leave room');
     const { leaveRoomTipModalVisible } = this.state;
     const { global } = this.props;
     const { user, room } = global;
-    console.log('room page render', user.createdRoomId, room.id);
+    console.log('room page render', room, room === null, room === undefined, user.createdRoomId, room.id);
     const { joinedRoomId } = user;
     const isAdmintor = global.isAdmintor();
 
     const title = `房间编号 ${room.id}`;
     const memberNumberTitle = `当前共 ${room.members.length} 人`;
-const leaveRoomBtn = (
-	<View onClick={this.handleLeaveRoom}><AtIcon value="close" /></View>
-);
+    const leaveRoomBtn = (
+      <View onClick={this.handleLeaveRoom}><AtIcon value="close" /></View>
+    );
 
     return (
       <View className="room-page">
         <HeadCard 
-		title={title} 
-		desc="等待全部成员加入后由组长开始估时" 
-		extra={leaveRoomBtn}
+	  title={title} 
+          desc="等待全部成员加入后由组长开始估时" 
+          extra={leaveRoomBtn}
 	/>
         <View className="room-page__content">
           <Card title={memberNumberTitle}>
