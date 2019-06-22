@@ -13,3 +13,5 @@ export const offlineEstimatePath = '/pages/offline/index';
 export const offlineEstimateCardPath = '/pages/offline/result';
 // 用户中心
 export const userPath = '/pages/user/index';
+// 错误页
+export const offlineErrorPath = '/pages/errors/offline';

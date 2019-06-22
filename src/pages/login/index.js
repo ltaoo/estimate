@@ -11,6 +11,7 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import './index.less';
+import { validateUserName } from '../../utils';
 
 @inject('global')
 @observer
@@ -19,18 +20,19 @@ export default class Login extends Taro.Component {
     navigationBarTitleText: '登录',
   }
 
-  handleUsernameChange = (value) => {
+  updateLoginUserName = (value) => {
     const { global } = this.props;
-    global.saveUsername(value);
+    global.updateLoginUserName(value);
   }
 
   login = () => {
     const { global } = this.props;
     const { username } = global;
-    if (username === '') {
+    const error = validateUserName(username);
+    if (error !== undefined) {
       Taro.atMessage({
         type: 'error',
-        message: '请输入用户名称',
+        message: error,
       });
       return;
     }
@@ -43,7 +45,7 @@ export default class Login extends Taro.Component {
   }
 
   render() {
-    const { username } = this.state;
+    const { global: { username } } = this.props;
     return (
       <View className='login-page'>
         <View className='login-page__wrapper'>
@@ -54,11 +56,18 @@ export default class Login extends Taro.Component {
               placeholder='请输入用户名'
               type='text'
               value={username}
-              onChange={this.handleUsernameChange}
+              onChange={this.updateLoginUserName}
             />
-            <AtButton className='login__btn' type='primary' onClick={this.login}>确认</AtButton>
+            <AtButton
+              className='login__btn'
+              type='primary'
+              onClick={this.login}
+            >登录</AtButton>
           </View>
-          <Text className='offline-mode__btn' onClick={this.switchOfflineMode}>离线模式</Text>
+          <Text
+            className='offline-mode__btn'
+            onClick={this.switchOfflineMode}
+          >离线模式</Text>
         </View>
         <AtMessage />
       </View>

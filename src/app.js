@@ -41,6 +41,8 @@ class App extends Component {
       'pages/offline/result',
       // 个人中心
       'pages/user/index',
+      // 错误页
+      'pages/errors/offline',
     ],
     window: {
       backgroundTextStyle: 'light',

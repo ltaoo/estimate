@@ -15,6 +15,7 @@ import {
   offlineEstimatePath,
   userPath,
 } from '../constants/paths';
+import { sleep, redirectOfflineTipPage } from '../utils';
 
 function getInitialRoom() {
   const initialRoom = {
@@ -29,10 +30,14 @@ const PATH_MAP = [
   offlineEstimatePath,
   userPath,
 ];
+
+const cachedUser = Taro.getStorageSync('user');
+
 export default observable({
+  // 任何响应式的值，都必须先声明
+  loading: false,
   init() {
-    const user = Taro.getStorageSync('user');
-    const { client } = this;
+    const { user, client } = this;
     if (user && !client) {
       // 如果本地存在登录信息，并且还没有连接，就主动连接
       this.connect(user.name);
@@ -45,11 +50,48 @@ export default observable({
   /**
    * 连接服务端
    * @param {string} username - 用户名
-   * @param {number} refresh - 是否刷新
+   * @param {number} refresh - 是否强制刷新 1 是、0 否
    */
   connect(username, refresh) {
-    this.client = io(`${socketUrl}?username=${username}&refresh=${refresh}`);
-    this.addListeners();
+    Taro.request({
+      url: `${socketUrl}/api/ping`,
+      mode: 'cors',
+    })
+      .then((res) => {
+        console.log(res);
+        this.client = io(`${socketUrl}?username=${username}&refresh=${refresh}`);
+        this.addListeners();
+      })
+      .catch((err) => {
+        console.log(err);
+        this.offlineMode = true;
+        redirectOfflineTipPage();
+      });
+  },
+  reconnect() {
+    const { user } = this;
+    this.loading = true;
+    // 为了不让页面看起来奇怪，延迟 500 毫秒展示出 loading 后再真实请求接口
+    sleep(500)
+      .then(() => {
+        return Taro.request({
+          url: `${socketUrl}/api/ping`,
+          mode: 'cors',
+        });
+      })
+      .then(() => {
+        this.client = io(`${socketUrl}?username=${user.name}`);
+        this.addListeners();
+      })
+      .catch(() => {
+        Taro.atMessage({
+          type: 'error',
+          message: '连接失败，请使用离线模式',
+        });
+      })
+      .finally(() => {
+        this.loading = false;
+      });
   },
   addListeners() {
     const { client, user } = this;
@@ -65,7 +107,8 @@ export default observable({
       this.room = room;
       const currentPath = Taro.getCurrentPages()[0].$router.path;
       if (
-        user.joinedRoomId
+        user
+        && user.joinedRoomId
         && user.estimating === false
         && currentPath !== roomPath
       ) {
@@ -195,20 +238,16 @@ export default observable({
     });
   },
 
-  // username
-  user: null,
-  username: undefined,
-  saveUsername(value) {
+  user: cachedUser,
+  // auth ----------------
+  username: '',
+  updateLoginUserName(value) {
     this.username = value;
   },
   login() {
     const { username } = this;
     // 连接 socket.io
-    try {
-      this.connect(username, 1);
-    } catch (err) {
-      console.log(err);
-    }
+    this.connect(username, 1);
   },
   logout() {
     const { client } = this;
@@ -297,14 +336,15 @@ export default observable({
     const { room } = this;
     if (room === null) {
       Taro.navigateTo({
-	url: hallPath,
+        url: hallPath,
       });
     }
   },
 
+  offlineMode: false,
   switchOfflineMode() {
     this.changeTabBarIndex(1);
-    this.offline = true;
+    this.offlineModel = true;
     Taro.navigateTo({
       url: offlineEstimatePath,
     });

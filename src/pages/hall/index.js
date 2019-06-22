@@ -15,10 +15,11 @@ import HeadCard from '../../components/HeadCard';
 import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
 import { tabList } from '../../constants';
 import { roomPath } from '../../constants/paths';
-import { checkLogin, redirectLogin } from '../../utils';
+import withCheckAuth from '../../utils/withCheckAuth';
 
 import './index.less';
 
+@withCheckAuth()
 @inject('global')
 @observer
 export default class Hall extends Component {
@@ -29,12 +30,12 @@ export default class Hall extends Component {
    * 进入该页面，就是连接的服务器端，可以向全局广播「某某加入大厅」
    */
   componentDidMount() {
-    const { global } = this.props;
-    global.init();
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
+    // const { global } = this.props;
+    // global.init();
+    // if (!checkLogin(global)) {
+    //   redirectLogin();
+    //   return;
+    // }
   }
 
   handleClickRoom = ({ title, status }) => {
