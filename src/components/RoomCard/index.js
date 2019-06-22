@@ -25,8 +25,7 @@ export default class RoomCard extends Taro.Component {
   }
 
   render() {
-    const { title, status } = this.props;
-    console.log(status);
+    const { title } = this.props;
     return (
       <View className='room-card' onClick={this.handleClick}>
         <View className='room-card__content'>

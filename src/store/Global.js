@@ -19,6 +19,7 @@ import {
 } from '../utils';
 import Hall from './Hall';
 import Auth from './Auth';
+import Estimate from './Estimate';
 
 // function getInitialRoom() {
 //   return {
@@ -47,6 +48,7 @@ export default class GlobalStore {
   constructor() {
     this.hallStore = new Hall(this);
     this.authStore = new Auth(this);
+    this.estimateStore = new Estimate(this);
   }
 
   @observable initial = true
@@ -93,7 +95,7 @@ export default class GlobalStore {
         // this.offlineMode = true;
         Taro.atMessage({
           type: 'error',
-          message: '连接服务失败',
+          message: '连接服务失败，请使用离线模式',
         });
       })
       .finally(() => {
@@ -154,16 +156,25 @@ export default class GlobalStore {
     const {
       authStore,
       hallStore,
+      estimateStore,
     } = this;
     hallStore.addListeners(client);
     authStore.addListeners(client);
+    estimateStore.addListeners(client);
 
     client.on('recoverSuccess', ({ user, rooms }) => {
       console.log('recover success', user, rooms);
       this.hallStore.rooms = rooms;
       this.user = user;
-      if (user.joinedRoomId !== null) {
-        client.emit('joinRoom', { id: user.joinedRoomId });
+      if (user.joinedRoomId !== null && user.estimating !== true) {
+        console.log('加入房间，但是还没开始估时');
+        client.emit('joinRoom', { roomId: user.joinedRoomId });
+        return;
+      }
+      // 已经开始估时
+      if (user.joinedRoomId !== null && user.estimating === true) {
+        console.log('加入房间并且已经开始估时');
+        client.emit('backEstimate');
       }
     });
     client.on('recoverFail', ({ message }) => {
@@ -178,45 +189,6 @@ export default class GlobalStore {
         });
     });
 
-    client.on('startEstimate', () => {
-      // Taro.navigateTo({
-      //   url: inputPath,
-      // });
-    });
-    client.on('estimate', ({ user, room }) => {
-      console.log(`${user.name} give estimate`);
-      this.room = room;
-    });
-    client.on('showEstimate', () => {
-      this.showEstimate = true;
-    });
-    client.on('showEstimateResultSuccess', () => {
-      // Taro.navigateTo({
-      //   url: resultPath,
-      // });
-    });
-    client.on('restartEstimateSuccess', () => {
-      console.log('restartEstimate');
-      this.estimate = undefined;
-      this.user.estimate = null;
-      this.showEstimate = false;
-      // Taro.redirectTo({
-      //   url: inputPath,
-      // });
-    });
-    client.on('stopEstimateSuccess', () => {
-      console.log('stop estimate');
-      this.estimate = undefined;
-      this.user.estimate = null;
-      this.user.estimating = true;
-      this.user.joinedRoomId = null;
-      this.user.createdRoomId = null;
-      Taro.setStorageSync('user', this.user);
-      this.showEstimate = false;
-      // Taro.redirectTo({
-      //   url: hallPath,
-      // });
-    });
     // 错误
     client.on('err', ({ message, type }) => {
       console.log('服务端错误', type, message);

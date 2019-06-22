@@ -20,6 +20,7 @@ const store = {
   global: globalStore,
   hall: globalStore.hallStore,
   auth: globalStore.authStore,
+  estimate: globalStore.estimateStore,
 };
 
 onError(error => {

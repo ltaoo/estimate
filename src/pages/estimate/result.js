@@ -14,13 +14,14 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
-import HeadCard from '../../components/HeadCard';
 import Card from '../../components/Card';
-import { checkLogin, redirectLogin } from '../../utils';
+import { checkIsAdmintor, checkLogin, redirectLogin } from '../../utils';
 import { computeEstimates } from './utils';
+import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
+@withBasicLayout()
 @inject('global')
 @observer
 export default class Result extends Component {
@@ -66,7 +67,7 @@ export default class Result extends Component {
     const { global } = this.props;
     const { room } = global;
     const estimates = room.members;
-    const isAdmintor = global.isAdmintor();
+    const isAdmintor = checkIsAdmintor();
     const stat = computeEstimates(estimates);
     console.log(stat, estimates);
     const estimateDetails = estimates
@@ -81,7 +82,6 @@ export default class Result extends Component {
       ));
     return (
       <View>
-        <HeadCard title='估时结果' desc='统计估时结果' />
         <View className='page__content'>
           <Card title='统计'>
             {stat.map(s => (

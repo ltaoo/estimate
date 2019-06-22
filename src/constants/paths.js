@@ -16,13 +16,6 @@ export const userPath = '/pages/user/index';
 // 错误页
 export const offlineErrorPath = '/pages/errors/offline';
 
-function defaultHeadProps() {
-  return {
-    title: 'Unknow',
-    desc: '刷新试试看',
-  };
-}
-
 export const headCardProps = new Proxy({
   [hallPath]: () => ({
     title: '大厅',
@@ -37,11 +30,23 @@ export const headCardProps = new Proxy({
       desc: '等待全部成员加入后由组长开始估时',
     };
   },
+  [inputPath]: () => ({
+    title: '选择点数',
+    desc: '选择需要的点数',
+  }),
+  [estimatePath]: () => ({
+    title: '已选择点数',
+    desc: '返回重新选择点数',
+  }),
+  [resultPath]: () => ({
+    title: '估时结果',
+    desc: '统计估时结果',
+  }),
 }, {
   get: (target, self) => {
     if (self in target) {
       return target[self];
     }
-    return defaultHeadProps;
+    return () => null;
   },
 });

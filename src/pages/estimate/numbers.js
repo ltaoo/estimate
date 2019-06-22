@@ -8,59 +8,65 @@ import {
 } from '@tarojs/components';
 import {
   AtButton,
-  AtMessage,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
 import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
-import { checkLogin, redirectLogin } from '../../utils';
+import { checkIsAdmintor } from '../../utils';
+import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
+@withBasicLayout()
 @inject('global')
+@inject('hall')
+@inject('estimate')
 @observer
 export default class Estimate extends Component {
-  componentDidMount() {
-    const { global } = this.props;
-
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
-
-    global.init();
-  }
-
   showResult = () => {
     const { global } = this.props;
     global.showEstimateResult();
   }
 
   render() {
-    const { global } = this.props;
+    const { global, hall, estimate: estimateStore } = this.props;
+    const { user } = global;
+    const { room } = hall;
     const {
-      user, room, estimate,
-    } = global;
-    const isAdmintor = global.isAdmintor();
-    const className = `iconfont icon-weitaoshuzi${estimate || user.estimate} number-card__text`;
-    const estimates = room.members;
-    const estimatedMembers = estimates.filter(e => e.estimate !== null);
-    const showEstimate = estimates.every(mem => mem.estimate !== null);
-    const title = `共 ${estimatedMembers.length} 人给出了估时`;
+      estimatedMembers,
+      unestimatedMembers,
+      showEstimate,
+    } = estimateStore;
+
+    const isAdmintor = checkIsAdmintor({ user, room });
+    const className = `iconfont icon-weitaoshuzi${user.estimate} number-card__text`;
+    console.log(JSON.stringify(room.members, null, '\t'));
+    const estimatedTitle = `${estimatedMembers.length}人给出了估时`;
+    const unestimatedTitle = `${unestimatedMembers.length}人未给出估时`;
 
     return (
       <View className='estimate-page'>
         <View className='number-card'><Text className={className} /></View>
         <View className='page__content'>
-          <Card title={title}>
-            {estimates.filter(e => e.name !== user.name).map(item => (
-              <UserCard name={item.name} estimate={item.estimate !== null} />
-            ))}
-          </Card>
           {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
+          <Card title={estimatedTitle}>
+            {estimatedMembers
+              .map(item => (
+                <UserCard
+                  key={item.id} name={item.name} estimate={item.estimate !== null}
+                />
+              ))}
+          </Card>
+          <Card title={unestimatedTitle}>
+            {unestimatedMembers
+              .map(item => (
+                <UserCard
+                  key={item.id} name={item.name} estimate={item.estimate === null}
+                />
+              ))}
+          </Card>
         </View>
-        <AtMessage />
       </View>
     );
   }

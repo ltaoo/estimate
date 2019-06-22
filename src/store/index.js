@@ -11,7 +11,6 @@ import {
   roomPath,
   inputPath,
   resultPath,
-  estimatePath,
   offlineEstimatePath,
   userPath,
 } from '../constants/paths';
@@ -228,60 +227,7 @@ export default observable({
       console.log('和服务器断开连接，请点击重连');
     });
   },
-
   user: cachedUser,
-  // room
-  roomId: undefined,
-  inRoom: false,
-  users: [],
-  createRoom() {
-    if (!this.client) {
-      console.log('还未连接 socket ');
-      return;
-    }
-    this.client.emit('createRoom');
-  },
-  updateRoomId(value) {
-    this.roomId = value;
-  },
-
-  // estimate
-  estimate: undefined,
-  estimates: [],
-  showEstimate: false,
-  startEstimate() {
-    const { client, roomId } = this;
-    this.showEstimate = false;
-    client.emit('startEstimate', { roomId });
-  },
-  updateEstimate(value) {
-    this.estimate = value;
-    const { client } = this;
-    client.emit('estimate', { value });
-    Taro.navigateTo({
-      url: estimatePath,
-    });
-  },
-  showEstimateResult() {
-    const { client } = this;
-    client.emit('showEstimateResult');
-  },
-  restartEstimate() {
-    const { client } = this;
-    client.emit('restartEstimate');
-  },
-  stopEstimate() {
-    this.client.emit('stopEstimate');
-  },
-
-  isAdmintor() {
-    const { room, user } = this;
-    let isAdmintor = false;
-    if (room.id !== null && (room.id === user.createdRoomId)) {
-      isAdmintor = true;
-    }
-    return isAdmintor;
-  },
   currentTabBarIndex: 0,
   /**
    *

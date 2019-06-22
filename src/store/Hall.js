@@ -24,8 +24,7 @@ export default class Hall {
 
   createRoom() {
     const { client } = this.globalStore;
-    if (!client) {
-      console.log('还未连接 socket ');
+    if (client === null) {
       return;
     }
     client.emit('createRoom');
@@ -33,11 +32,17 @@ export default class Hall {
 
   joinRoom(id) {
     const { client } = this.globalStore;
+    if (client === null) {
+      return;
+    }
     client.emit('joinRoom', { roomId: id });
   }
 
   leaveRoom() {
     const { client } = this.globalStore;
+    if (client === null) {
+      return;
+    }
     client.emit('leaveRoom');
   }
 
@@ -47,11 +52,19 @@ export default class Hall {
     });
   }
 
+  startEstimate() {
+    const { client } = this.globalStore;
+    if (client === null) {
+      return;
+    }
+    client.emit('startEstimate');
+  }
+
   addListeners(client) {
     client.on('createRoomSuccess', ({ user, room }) => {
-      console.log('create room success');
-      this.user = user;
+      console.log('create room success', user, room);
       Taro.setStorageSync('user', user);
+      this.globalStore.user = user;
       this.room = room;
     });
     client.on('globalCreateRoomSuccess', ({ rooms }) => {
@@ -59,11 +72,9 @@ export default class Hall {
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} join room, now member of room is`, room);
+      Taro.setStorageSync('user', user);
+      this.globalStore.user = user;
       this.room = room;
-      Taro.atMessage({
-        type: 'info',
-        message: `${user.name} 加入了房间`,
-      });
       Taro.navigateTo({
         url: `${roomPath}?id=${room.id}`,
       });
@@ -77,19 +88,24 @@ export default class Hall {
       this.room = room;
     });
     client.on('joinRoomFail', ({ message }) => {
+      console.log('join room fail', message);
       Taro.atMessage({
         type: 'error',
         message,
       });
     });
-    client.on('leaveRoom', ({ user, room }) => {
+    client.on('leaveRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} leave room`, room.members);
-      // this.user = user;
+      Taro.setStorageSync('user', user);
+      this.globalStore.user = user;
       this.room = room;
+    });
+    client.on('globalLeaveRoomSuccess', ({ user, room }) => {
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 离开了房间`,
       });
+      this.room = room;
     });
     client.on('updateRooms', ({ rooms }) => {
       this.rooms = rooms;

@@ -14,6 +14,8 @@ import { observer, inject } from '@tarojs/mobx';
 
 import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
+import { ROOM_STATUS } from '../../components/RoomCard';
+import { inputPath } from '../../constants/paths';
 import withBasicLayout from '../../utils/withBasicLayout';
 import { checkIsAdmintor } from '../../utils';
 
@@ -24,6 +26,18 @@ import './index.less';
 @inject('hall')
 @observer
 export default class Room extends Component {
+  componentDidHide() {
+    console.log('room page hide');
+    const { hall } = this.props;
+    hall.leaveRoom();
+  }
+
+  componentWillUnmount() {
+    console.log('room page un mount');
+    const { hall } = this.props;
+    hall.leaveRoom();
+  }
+
   showLeaveRoomTipModal = () => {
     this.setState({
       leaveRoomTipModalVisible: true,
@@ -50,16 +64,22 @@ export default class Room extends Component {
    * 开始估时
    */
   startEstimate = () => {
-    const { global } = this.props;
-    const { users } = global;
-    if (users.length === 1) {
+    const { hall } = this.props;
+    const { room } = hall;
+    if (room.members.length === 1) {
       Taro.atMessage({
         type: 'error',
         message: '房间内只有一个成员',
       });
       return;
     }
-    global.startEstimate();
+    hall.startEstimate();
+  }
+
+  backToInputEstimate = () => {
+    Taro.navigateTo({
+      url: inputPath,
+    });
   }
 
   render() {
@@ -68,9 +88,7 @@ export default class Room extends Component {
     const { user } = global;
     const { room } = hall;
     const isAdmintor = checkIsAdmintor({ user, room });
-
     const memberNumberTitle = `当前共 ${room.members.length} 人`;
-    console.log(JSON.stringify(room.members));
 
     return (
       <View className='room-page'>
@@ -79,6 +97,9 @@ export default class Room extends Component {
             <AtButton type='primary' onClick={this.startEstimate}>
               开始估时
             </AtButton>
+          )}
+          {room.status === ROOM_STATUS.STARTED && (
+            <AtButton onClick={this.backToInputEstimate}>进入估时</AtButton>
           )}
           <Card title={memberNumberTitle}>
             <View>
