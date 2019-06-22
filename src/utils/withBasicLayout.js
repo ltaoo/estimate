@@ -6,6 +6,9 @@ import {
   AtTabBar,
 } from 'taro-ui';
 
+import HeadCard from '../components/HeadCard';
+import Skeleton from '../components/Skeleton';
+
 export const tabList = [
   { iconType: 'home' },
   { iconType: 'lightning-bolt' },
@@ -37,10 +40,20 @@ export default () => {
       }
 
       render() {
-        const { global: { currentTabBarIndex } } = this.props;
+        const { global: { initial, client, loading, currentTabBarIndex } } = this.props;
+        let content = (
+          <Component {...this.props} />
+        );
+        console.log('basiclayout', client, loading);
+        if (client === null && initial === true) {
+          content = (
+            <Skeleton rows={6} />
+          );
+        }
         return (
           <View className='basic-layout'>
-            <Component {...this.props} />
+            <HeadCard title='大厅' desc='加入已存在的房间或者创建房间' />
+            {content}
             <AtMessage />
             <AtTabBar
               fixed

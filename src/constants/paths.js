@@ -15,3 +15,20 @@ export const offlineEstimateCardPath = '/pages/offline/result';
 export const userPath = '/pages/user/index';
 // 错误页
 export const offlineErrorPath = '/pages/errors/offline';
+
+export const heads = new Proxy({
+  [hallPath]: {
+    title: '大厅',
+    desc: '加入已存在的房间或者创建房间',
+  },
+}, {
+  get: (self, target) => {
+    if (self in target) {
+      return target[self];
+    }
+    return {
+      title: 'Unknow',
+      desc: '刷新试试看',
+    };
+  },
+});

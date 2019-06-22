@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro';
 import {
   View,
+  Text,
 } from '@tarojs/components';
 import {
   AtInput,
@@ -9,15 +10,14 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import Card from '../../components/Card';
-import HeadCard from '../../components/HeadCard';
 import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
 @withBasicLayout()
-@inject('global')
 @inject('hall')
+@inject('global')
 @observer
 export default class HallPage extends Component {
   config = {
@@ -79,18 +79,20 @@ export default class HallPage extends Component {
   render() {
     const {
       hall: { rooms },
-      global: { user },
+      global: { client, offlineMode, user },
     } = this.props;
-    return (
-      <View className='hall-page'>
-        <HeadCard title='大厅' desc='加入已存在的房间或者创建房间' />
-        <View className='hall-page__content'>
-          <Card title='加入的房间'>
-              <RoomCard
-                title={user.joinedRoomId}
-                onClick={this.backToRoom}
-              />
-          </Card>
+    console.log(offlineMode, client, user);
+    const content = client === null
+      ? (
+        <View className='hall-page__content--empty'>
+          <Text className='offline-content'>
+            <Text className='iconfont icon-offline offline-content__icon'></Text>
+            <Text className='offline-content__text'>offline</Text>
+          </Text>
+        </View>
+      )
+      : (
+        <View>
           <Card title='已有房间'>
             {rooms.map(room => (
               <RoomCard
@@ -106,6 +108,12 @@ export default class HallPage extends Component {
             <AtButton type='primary' onClick={this.joinRoom}>进入房间</AtButton>
             <AtButton className='btn--create-room' onClick={this.createRoom}>创建房间</AtButton>
           </Card>
+        </View>
+      );
+    return (
+      <View className='hall-page'>
+        <View className='page__content hall-page__content'>
+          {content}
         </View>
       </View>
     );

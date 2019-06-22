@@ -4,9 +4,6 @@ import {
   Text,
 } from '@tarojs/components';
 import PropTypes from 'prop-types';
-import {
-  AtIcon,
-} from 'taro-ui';
 
 import './index.less';
 
@@ -34,14 +31,6 @@ export default class RoomCard extends Taro.Component {
       <View className='room-card' onClick={this.handleClick}>
         <View className='room-card__content'>
           <Text className='room-card__title'>{title}</Text>
-        </View>
-        <View>
-          <View>
-            {status === ROOM_STATUS.ENABLE
-              ? <AtIcon value='chevron-right' />
-              : <Text className='room-card__tip'>已开始估时</Text>
-            }
-          </View>
         </View>
       </View>
     );

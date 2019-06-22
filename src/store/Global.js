@@ -49,6 +49,8 @@ export default class GlobalStore {
     this.authStore = new Auth(this);
   }
 
+  @observable initial = true
+  @observable loading = true
   // 当前是否离线
   offlineMode = false
   client = null
@@ -56,6 +58,7 @@ export default class GlobalStore {
   @observable user = getInitialUser()
   // 应用初始化
   init() {
+    this.loading = true;
     const currentPath = Taro.getCurrentPages()[0].$router.path;
     this.changeTabBarIndex(PATH_MAP.indexOf(currentPath));
     // 用户已经初始化
@@ -88,6 +91,8 @@ export default class GlobalStore {
       })
       .catch(() => {
         // redirectOfflineTipPage();
+        console.log('connect fail');
+        this.offlineMode = true;
         Taro.atMessage({
           type: 'error',
           message: '连接服务失败',
@@ -95,6 +100,7 @@ export default class GlobalStore {
       })
       .finally(() => {
         Taro.hideLoading();
+        // this.loading = false;
       });
   }
   /**
@@ -151,9 +157,15 @@ export default class GlobalStore {
       console.log('recover success', user);
       this.hallStore.rooms = rooms;
       this.user = user;
+      if (user.joinedRoomId !== null) {
+        client.emit('joinRoom', { id: user.joinedRoomId });
+      }
     });
     client.on('recoverFail', () => {
       console.log('recover fail');
+      // Taro.atMessage({
+
+      // });
     });
     client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success');

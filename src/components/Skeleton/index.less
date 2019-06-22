@@ -1,0 +1,29 @@
+.skeleton {
+  display: table;
+  width: 100%;
+  padding: 40px;
+
+  box-sizing: border-box;
+
+  &__content {
+    display: table-cell;
+    width: 100%;
+    vertical-align: top;
+  }
+
+  &__paragraph {
+    width: 70%;
+    height: 32px;
+    margin-top: 16px;
+    list-style: none;
+    background: #f2f2f2;
+
+    &--short {
+      width: 45%;
+    }
+
+    &--long {
+      width: 100%;
+    }
+  }
+}
