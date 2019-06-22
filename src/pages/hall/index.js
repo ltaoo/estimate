@@ -35,8 +35,8 @@ export default class HallPage extends Component {
    * 创建房间
    */
   createRoom = () => {
-    const { global } = this.props;
-    global.createRoom();
+    const { hall } = this.props;
+    hall.createRoom();
   }
 
   /**
@@ -58,16 +58,16 @@ export default class HallPage extends Component {
    * @param {string} value - 房间 id
    */
   joinRoom = () => {
-    const { global } = this.props;
-    const { roomId } = global;
-    if (roomId === undefined) {
+    const { hall } = this.props;
+    const { inputedRoomId } = hall;
+    if (inputedRoomId === undefined) {
       Taro.atMessage({
         type: 'error',
         message: '请输入房间号码',
       });
       return;
     }
-    global.joinRoom(roomId);
+    hall.joinRoom(inputedRoomId);
   }
 
   handleClickTabBar = (value) => {

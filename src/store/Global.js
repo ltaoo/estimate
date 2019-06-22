@@ -151,8 +151,15 @@ export default class GlobalStore {
   }
 
   addListeners(client) {
+    const {
+      authStore,
+      hallStore,
+    } = this;
+    hallStore.addListeners(client);
+    authStore.addListeners(client);
+
     client.on('recoverSuccess', ({ user, rooms }) => {
-      console.log('recover success', user);
+      console.log('recover success', user, rooms);
       this.hallStore.rooms = rooms;
       this.user = user;
       if (user.joinedRoomId !== null) {
@@ -170,35 +177,7 @@ export default class GlobalStore {
           redirectLogin();
         });
     });
-    client.on('createRoomSuccess', ({ user, room }) => {
-      console.log('create room success');
-      this.user = user;
-      this.room = room;
-    });
-    client.on('joinRoomSuccess', ({ user, room }) => {
-      console.log(`${user.name} join room, now member of room is`, room);
-      this.room = room;
-      Taro.atMessage({
-        type: 'info',
-        message: `${user.name} 加入了房间`,
-      });
 
-      // Taro.navigateTo({
-      //   url: roomPath,
-      // });
-    });
-    client.on('leaveRoom', ({ user, room }) => {
-      console.log(`${user.name} leave room`, room.members);
-      // this.user = user;
-      this.room = room;
-      Taro.atMessage({
-        type: 'info',
-        message: `${user.name} 离开了房间`,
-      });
-    });
-    client.on('updateRooms', ({ rooms }) => {
-      this.rooms = rooms;
-    });
     client.on('startEstimate', () => {
       // Taro.navigateTo({
       //   url: inputPath,

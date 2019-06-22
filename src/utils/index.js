@@ -45,3 +45,18 @@ export function sleep(time) {
     setTimeout(resolve, time);
   });
 }
+
+
+export function checkIsAdmintor({ user, room }) {
+  let isAdmintor = false;
+  if (user === null || room === null || room === undefined) {
+    return isAdmintor;
+  }
+  if (user.createdRoomId === null) {
+    return isAdmintor;
+  }
+  if (room.id === user.createdRoomId) {
+    isAdmintor = true;
+  }
+  return isAdmintor;
+}

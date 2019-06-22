@@ -17,14 +17,6 @@ import {
 } from '../constants/paths';
 import { sleep, redirectOfflineTipPage } from '../utils';
 
-function getInitialRoom() {
-  const initialRoom = {
-    id: null,
-    members: [],
-  };
-  return initialRoom;
-}
-
 const PATH_MAP = [
   hallPath,
   offlineEstimatePath,
@@ -45,7 +37,6 @@ export default observable({
   },
   // client
   client: null,
-  room: getInitialRoom(),
   rooms: [],
   /**
    * 连接服务端
@@ -95,7 +86,7 @@ export default observable({
   },
   addListeners() {
     const { client, user } = this;
-    client.on('recoverSuccess', ({ room = getInitialRoom() }) => {
+    client.on('recoverSuccess', ({ room }) => {
       console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
         Taro.redirectTo({
@@ -252,14 +243,6 @@ export default observable({
   },
   updateRoomId(value) {
     this.roomId = value;
-  },
-  joinRoom(id) {
-    const roomId = id || this.roomId;
-    this.client.emit('joinRoom', { roomId });
-  },
-  leaveRoom() {
-    const { client, roomId } = this;
-    client.emit('leaveRoom', { roomId });
   },
 
   // estimate

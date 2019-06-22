@@ -22,7 +22,6 @@ export default class Auth {
     this.globalStore.connect()
       .then((client) => {
         client.emit('login', { username: this.username });
-        this.addListeners(client);
       })
       .catch(() => {});
   }
@@ -47,6 +46,12 @@ export default class Auth {
           url: hallPath,
         });
       }, 500);
+    });
+    client.on('loginFail', ({ message }) => {
+      Taro.atMessage({
+        type: 'error',
+        message,
+      });
     });
     client.on('logoutSuccess', () => {
       Taro.removeStorageSync('user');

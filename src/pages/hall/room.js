@@ -1,11 +1,10 @@
 import Taro, { Component } from '@tarojs/taro';
 import {
   View,
-  Text,
   Button,
 } from '@tarojs/components';
 import {
-  AtFab,
+  AtButton,
   AtModal,
   AtModalHeader,
   AtModalContent,
@@ -16,21 +15,15 @@ import { observer, inject } from '@tarojs/mobx';
 import Card from '../../components/Card';
 import UserCard from '../../components/UserCard';
 import withBasicLayout from '../../utils/withBasicLayout';
+import { checkIsAdmintor } from '../../utils';
 
 import './index.less';
 
 @withBasicLayout()
 @inject('global')
+@inject('hall')
 @observer
 export default class Room extends Component {
-  constructor(props) {
-    super(props);
-
-    const { global } = props;
-    console.log(global.room);
-    global.checkHasRoom();
-  }
-
   showLeaveRoomTipModal = () => {
     this.setState({
       leaveRoomTipModalVisible: true,
@@ -71,30 +64,36 @@ export default class Room extends Component {
 
   render() {
     const { leaveRoomTipModalVisible } = this.state;
-    const { global } = this.props;
-    const { user, room } = global;
-    console.log('room page render', room, room === null, room === undefined, user.createdRoomId, room.id);
-    const isAdmintor = global.isAdmintor();
+    const { global, hall } = this.props;
+    const { user } = global;
+    const { room } = hall;
+    const isAdmintor = checkIsAdmintor({ user, room });
 
     const memberNumberTitle = `当前共 ${room.members.length} 人`;
+    console.log(JSON.stringify(room.members));
 
     return (
       <View className='room-page'>
         <View className='room-page__content'>
+          {isAdmintor && (
+            <AtButton type='primary' onClick={this.startEstimate}>
+              开始估时
+            </AtButton>
+          )}
           <Card title={memberNumberTitle}>
             <View>
-              {room.members.map(member => (
-                <UserCard key={member.id} isAdmintor={member.createdRoomId === room.id} name={user.name} />
-              ))}
+              {room.members.map(member => {
+                return (
+                  <UserCard
+                    key={member.id}
+                    isAdmintor={member.createdRoomId === room.id}
+                    name={member.name}
+                  />
+                );
+              })}
             </View>
           </Card>
-          {isAdmintor && (
-            <View className='btn--start-estimate'>
-              <AtFab circle type='primary' onClick={this.startEstimate}>
-                <Text className='at-fab__icon at-icon at-icon-lightning-bolt'></Text>
-              </AtFab>
-            </View>
-          )}
+
         </View>
         <AtModal
           isOpened={leaveRoomTipModalVisible}
