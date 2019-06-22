@@ -1,3 +1,9 @@
+.user-page {
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+}
 .user {
   &__avatar-wrapper {
     display: flex;
@@ -21,4 +27,10 @@
   &__name {
     color: #666;
   }
+}
+
+// 覆盖默认的宽高
+.item-avatar {
+  width: 100px !important;
+  height: 100px !important;
 }

@@ -4,10 +4,11 @@ import {
   Text,
 } from '@tarojs/components';
 import {
-  AtButton,
   AtAvatar,
   AtActionSheet,
   AtActionSheetItem,
+  AtList,
+  AtListItem,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
@@ -46,14 +47,29 @@ export default class User extends Taro.Component {
     const { actionSheetVisible } = this.state;
     const { global: { user } } = this.props;
     return (
-      <View>
+      <View className='user-page'>
         <HeadCard title='用户中心' desc='修改用户名或者注销' />
-        <View className='page__content'>
-          <View className='user__avatar-wrapper'>
-            <AtAvatar size='large' className='user__avatar user__avatar--large' circle text={user.name}></AtAvatar>
-            <Text className='user__name'>{user.name}</Text>
-          </View>
-          <AtButton type='danger' onClick={this.showActionSheet}>注销</AtButton>
+        <View className='user-page__content'>
+          <AtList>
+            <View className='at-list__item at-list__item--thumb at-list__item--multiple'>
+              <View className='at-list__item-container'>
+                <View className='at-list__item-thumb item-thumb item-avatar'>
+                  <View className='taro-img item-thumb__info'>
+                    <AtAvatar text={user.name}></AtAvatar>
+                  </View>
+                </View>
+                <View className='at-list__item-content item-content'>
+                  <View className='item-content__info'>
+                    <View className='item-content__info-title'>{user.name}</View>
+                    <View className='item-content__info-note'>标题文字</View>
+                  </View>
+                  <View className='at-list__item-extra item-extra'></View>
+                </View>
+              </View>
+            </View>
+            <AtListItem title='修改名称' arrow='right' />
+            <AtListItem title='退出' onClick={this.showActionSheet} arrow='right' />
+          </AtList>
         </View>
         <AtActionSheet
           isOpened={actionSheetVisible}
@@ -61,7 +77,7 @@ export default class User extends Taro.Component {
           onClose={this.handleActionSheetClosed}
         >
           <AtActionSheetItem onClick={this.logout}>
-            <Text style={{ color: 'red' }}>注销</Text>
+            <Text style={{ color: 'red' }}>确认退出</Text>
           </AtActionSheetItem>
         </AtActionSheet>
       </View>
