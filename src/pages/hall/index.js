@@ -1,7 +1,6 @@
 import Taro, { Component } from '@tarojs/taro';
 import {
   View,
-  Text,
 } from '@tarojs/components';
 import {
   AtInput,
@@ -44,8 +43,8 @@ export default class HallPage extends Component {
    * 输入房间号
    */
   handleRoomIdChange = (value) => {
-    const { global } = this.props;
-    global.updateRoomId(value);
+    const { hall } = this.props;
+    hall.updateRoomId(value);
   }
 
   backToRoom = () => {
@@ -79,41 +78,34 @@ export default class HallPage extends Component {
   render() {
     const {
       hall: { rooms },
-      global: { client, offlineMode, user },
     } = this.props;
-    console.log(offlineMode, client, user);
-    const content = client === null
-      ? (
-        <View className='hall-page__content--empty'>
-          <Text className='offline-content'>
-            <Text className='iconfont icon-offline offline-content__icon'></Text>
-            <Text className='offline-content__text'>offline</Text>
-          </Text>
-        </View>
-      )
-      : (
-        <View>
-          <Card title='已有房间'>
-            {rooms.map(room => (
-              <RoomCard
-                key={room.id}
-                title={room.id}
-                status={room.status}
-                onClick={this.handleClickRoom}
-              />
-            ))}
-          </Card>
-          <Card title='输入房间编号或创建房间'>
-            <AtInput title='房间号' placeholder='请输入房间号' onChange={this.handleRoomIdChange} />
-            <AtButton type='primary' onClick={this.joinRoom}>进入房间</AtButton>
-            <AtButton className='btn--create-room' onClick={this.createRoom}>创建房间</AtButton>
-          </Card>
-        </View>
-      );
     return (
       <View className='hall-page'>
         <View className='page__content hall-page__content'>
-          {content}
+          <View>
+            <Card title='输入房间编号或创建房间'>
+              <AtInput
+                title='房间号'
+                placeholder='请输入房间号'
+                onChange={this.handleRoomIdChange}
+              />
+              <AtButton type='primary' onClick={this.joinRoom}>进入房间</AtButton>
+              <AtButton
+                className='btn--create-room'
+                onClick={this.createRoom}
+              >创建房间</AtButton>
+            </Card>
+            <Card title='已有房间'>
+              {rooms.map(room => (
+                <RoomCard
+                  key={room.id}
+                  title={room.id}
+                  status={room.status}
+                  onClick={this.handleClickRoom}
+                />
+              ))}
+            </Card>
+          </View>
         </View>
       </View>
     );

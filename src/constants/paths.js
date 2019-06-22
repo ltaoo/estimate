@@ -16,19 +16,32 @@ export const userPath = '/pages/user/index';
 // 错误页
 export const offlineErrorPath = '/pages/errors/offline';
 
-export const heads = new Proxy({
-  [hallPath]: {
+function defaultHeadProps() {
+  return {
+    title: 'Unknow',
+    desc: '刷新试试看',
+  };
+}
+
+export const headCardProps = new Proxy({
+  [hallPath]: () => ({
     title: '大厅',
     desc: '加入已存在的房间或者创建房间',
+  }),
+  [roomPath]: ({ id }) => {
+    // const leaveRoomBtn = (
+    //   <View onClick={this.handleLeaveRoom}><AtIcon value='close' /></View>
+    // );
+    return {
+      title: `房间编号 ${id}`,
+      desc: '等待全部成员加入后由组长开始估时',
+    };
   },
 }, {
-  get: (self, target) => {
+  get: (target, self) => {
     if (self in target) {
       return target[self];
     }
-    return {
-      title: 'Unknow',
-      desc: '刷新试试看',
-    };
+    return defaultHeadProps;
   },
 });

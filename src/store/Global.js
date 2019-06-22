@@ -51,9 +51,7 @@ export default class GlobalStore {
 
   @observable initial = true
   @observable loading = true
-  // 当前是否离线
-  offlineMode = false
-  client = null
+  @observable client = null
   // 登录的用户信息
   @observable user = getInitialUser()
   // 应用初始化
@@ -87,12 +85,12 @@ export default class GlobalStore {
       })
       .then((client) => {
         console.log('client emit recover event');
-        client.emit('recover', { user: cachedUser });
+        client.emit('recover', { username: cachedUser.name });
       })
       .catch(() => {
         // redirectOfflineTipPage();
         console.log('connect fail');
-        this.offlineMode = true;
+        // this.offlineMode = true;
         Taro.atMessage({
           type: 'error',
           message: '连接服务失败',
@@ -120,7 +118,7 @@ export default class GlobalStore {
           resolve(this.client);
         })
         .catch(() => {
-          this.offlineMode = true;
+          // this.offlineMode = true;
           reject();
         });
     });
@@ -161,11 +159,16 @@ export default class GlobalStore {
         client.emit('joinRoom', { id: user.joinedRoomId });
       }
     });
-    client.on('recoverFail', () => {
-      console.log('recover fail');
-      // Taro.atMessage({
-
-      // });
+    client.on('recoverFail', ({ message }) => {
+      console.log('recover fail', message);
+      Taro.showModal({
+        title: '登录失败',
+        content: '登录信息失效，请重新登录',
+        showCancel: false,
+      })
+        .then(() => {
+          redirectLogin();
+        });
     });
     client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success');
@@ -250,7 +253,7 @@ export default class GlobalStore {
 
   switchOfflineMode() {
     this.changeTabBarIndex(1);
-    this.offlineModel = true;
+    // this.offlineModel = true;
     Taro.navigateTo({
       url: offlineEstimatePath,
     });
@@ -273,5 +276,11 @@ export default class GlobalStore {
     Taro.navigateTo({
       url: PATH_MAP[nextIndex],
     });
+  }
+  setInitial() {
+    this.initial = false
+  }
+  resetInitial() {
+    this.initial = true;
   }
 }

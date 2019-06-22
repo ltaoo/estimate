@@ -6,6 +6,7 @@ import {
   AtTabBar,
 } from 'taro-ui';
 
+import { headCardProps } from '../constants/paths';
 import HeadCard from '../components/HeadCard';
 import Skeleton from '../components/Skeleton';
 
@@ -20,18 +21,21 @@ export default () => {
     class HOC extends Taro.Component {
       constructor(props) {
         super(props);
-        console.log('call num');
         const { global } = this.props;
+        global.resetInitial();
         global.init();
       }
       componentDidMount() {
-        // if (!checkLogin(global)) {
-        //   redirectLogin();
-        //   return;
-        // }
-        // if (global.offlineMode === true) {
-        //   redirectOfflineTipPage();
-        // }
+        const { global } = this.props;
+        setTimeout(() => {
+          global.setInitial();
+        }, 500);
+      }
+
+      componentWillUnmount() {
+        console.log('basiclayout unmount');
+        const { global } = this.props;
+        global.resetInitial();
       }
 
       handleClickTabBar = (value) => {
@@ -40,19 +44,20 @@ export default () => {
       }
 
       render() {
-        const { global: { initial, client, loading, currentTabBarIndex } } = this.props;
+        const { global: { initial, client, currentTabBarIndex } } = this.props;
         let content = (
           <Component {...this.props} />
         );
-        console.log('basiclayout', client, loading);
+        const { params, path } = this.$router;
         if (client === null && initial === true) {
           content = (
             <Skeleton rows={6} />
           );
         }
+        const cardProps = headCardProps[path](params);
         return (
           <View className='basic-layout'>
-            <HeadCard title='大厅' desc='加入已存在的房间或者创建房间' />
+            <HeadCard {...cardProps} />
             {content}
             <AtMessage />
             <AtTabBar
