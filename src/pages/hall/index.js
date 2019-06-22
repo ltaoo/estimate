@@ -48,6 +48,12 @@ export default class HallPage extends Component {
     global.updateRoomId(value);
   }
 
+  backToRoom = () => {
+    // 回到房间
+    const { hall } = this.props;
+    hall.backToRoom();
+  }
+
   /**
    * 加入指定房间
    * @param {string} value - 房间 id
@@ -73,11 +79,18 @@ export default class HallPage extends Component {
   render() {
     const {
       hall: { rooms },
+      global: { user },
     } = this.props;
     return (
       <View className='hall-page'>
         <HeadCard title='大厅' desc='加入已存在的房间或者创建房间' />
         <View className='hall-page__content'>
+          <Card title='加入的房间'>
+              <RoomCard
+                title={user.joinedRoomId}
+                onClick={this.backToRoom}
+              />
+          </Card>
           <Card title='已有房间'>
             {rooms.map(room => (
               <RoomCard

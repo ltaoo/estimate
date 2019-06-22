@@ -1,4 +1,6 @@
+import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
+import { roomPath } from '../constants/paths';
 
 export default class Hall {
   @observable inputedRoomId = ''
@@ -19,5 +21,11 @@ export default class Hall {
       return;
     }
     client.emit('createRoom');
+  }
+
+  backToRoom() {
+    Taro.navigateTo({
+      url: roomPath,
+    });
   }
 }

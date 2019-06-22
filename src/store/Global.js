@@ -6,22 +6,26 @@ import { socketUrl } from '../constants';
 import {
   // loginPath,
   hallPath,
-  roomPath,
+  // roomPath,
   // inputPath,
   // resultPath,
   offlineEstimatePath,
   userPath,
 } from '../constants/paths';
-import { sleep, redirectOfflineTipPage } from '../utils';
+import {
+  sleep,
+  // redirectOfflineTipPage,
+  redirectLogin,
+} from '../utils';
 import Hall from './Hall';
 import Auth from './Auth';
 
-function getInitialRoom() {
-  return {
-    id: null,
-    members: [],
-  };
-}
+// function getInitialRoom() {
+//   return {
+//     id: null,
+//     members: [],
+//   };
+// }
 
 function getInitialUser() {
   return {
@@ -58,19 +62,38 @@ export default class GlobalStore {
     if (this.user && this.client) {
       return;
     }
+    const cachedUser = Taro.getStorageSync('user');
+    // 没有登录
+    if (cachedUser === '') {
+      redirectLogin();
+      return;
+    }
     Taro.showLoading({
-      title: 'loading'
+      title: '加载数据中...'
     })
       .then(() => {
         return sleep(1000);
       })
       .then(() => {
-        const cachedUser = Taro.getStorageSync('user');
+        this.user = cachedUser;
         if (cachedUser && !this.client) {
           // 如果本地存在登录信息，并且还没有连接，就主动连接
-          this.connect(cachedUser.name);
+          return this.connect();
         }
-        this.user = cachedUser;
+        return Promise.reject();
+      })
+      .then((client) => {
+        console.log('client emit recover event');
+        client.emit('recover', { user: cachedUser });
+      })
+      .catch(() => {
+        // redirectOfflineTipPage();
+        Taro.atMessage({
+          type: 'error',
+          message: '连接服务失败',
+        });
+      })
+      .finally(() => {
         Taro.hideLoading();
       });
   }
@@ -79,21 +102,22 @@ export default class GlobalStore {
    * @param {string} username - 用户名
    * @param {number} refresh - 是否强制刷新 1 是、0 否
    */
-  connect(username, refresh) {
-    Taro.request({
-      url: `${socketUrl}/api/ping`,
-      mode: 'cors',
-    })
-      .then((res) => {
-        console.log(res);
-        this.client = io(`${socketUrl}?username=${username}&refresh=${refresh}`);
-        this.addListeners();
+  connect() {
+    return new Promise((resolve, reject) => {
+      Taro.request({
+        url: `${socketUrl}/api/ping`,
+        mode: 'cors',
       })
-      .catch((err) => {
-        console.log(err);
-        this.offlineMode = true;
-        redirectOfflineTipPage();
-      });
+        .then(() => {
+          this.client = io(socketUrl);
+          this.addListeners(this.client);
+          resolve(this.client);
+        })
+        .catch(() => {
+          this.offlineMode = true;
+          reject();
+        });
+    });
   }
 
   reconnect() {
@@ -122,76 +146,21 @@ export default class GlobalStore {
       });
   }
 
-  addListeners() {
-    const { client, user } = this;
-    client.on('recoverSuccess', ({ room = getInitialRoom() }) => {
-      console.log('recover from localstorage', user, room);
-      if (user.joinedRoomId === null) {
-        // Taro.redirectTo({
-        //   url: hallPath,
-        // });
-        return;
-      }
+  addListeners(client) {
+    client.on('recoverSuccess', ({ user, rooms }) => {
+      console.log('recover success', user);
+      this.hallStore.rooms = rooms;
       this.user = user;
-      this.room = room;
-      const currentPath = Taro.getCurrentPages()[0].$router.path;
-      if (
-        user
-        && user.joinedRoomId
-        && user.estimating === false
-        && currentPath !== roomPath
-      ) {
-        // Taro.redirectTo({
-        //   url: roomPath,
-        // });
-      }
     });
-    client.on('loginSuccess', () => {
-      console.log('login success', user.name);
-      this.user = user;
-      Taro.atMessage({
-        type: 'success',
-        message: '登录成功',
-      });
-      Taro.setStorageSync('user', user);
-      // setTimeout(() => {
-      //   Taro.redirectTo({
-      //     url: hallPath,
-      //   });
-      // }, 800);
+    client.on('recoverFail', () => {
+      console.log('recover fail');
     });
-    client.on('logoutSuccess', () => {
-      Taro.removeStorageSync('user');
-      Taro.atMessage({
-        type: 'success',
-        message: '注销成功',
-      });
-      // setTimeout(() => {
-      //   Taro.redirectTo({
-      //     url: loginPath,
-      //   });
-      // }, 800);
-    });
-    // 初始化监听
-    client.on('newConnection', () => {
-      // 已经在房间，就不提示有谁进入了大厅
-      if (this.inRoom) {
-        return;
-      }
-      Taro.atMessage({
-        type: 'info',
-        message: `${user.name} 进入了大厅`,
-      });
-    });
-    client.on('getRooms', ({ rooms }) => {
-      this.rooms = rooms;
-    });
-    client.on('createRoomSuccess', ({ room }) => {
+    client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success');
       this.user = user;
       this.room = room;
     });
-    client.on('joinRoomSuccess', ({ room }) => {
+    client.on('joinRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} join room, now member of room is`, room);
       this.room = room;
       Taro.atMessage({
@@ -203,7 +172,7 @@ export default class GlobalStore {
       //   url: roomPath,
       // });
     });
-    client.on('leaveRoom', ({ room }) => {
+    client.on('leaveRoom', ({ user, room }) => {
       console.log(`${user.name} leave room`, room.members);
       // this.user = user;
       this.room = room;
@@ -220,7 +189,7 @@ export default class GlobalStore {
       //   url: inputPath,
       // });
     });
-    client.on('estimate', ({ room }) => {
+    client.on('estimate', ({ user, room }) => {
       console.log(`${user.name} give estimate`);
       this.room = room;
     });

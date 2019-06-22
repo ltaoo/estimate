@@ -1,7 +1,17 @@
+import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
+
+import {
+  loginPath,
+  hallPath,
+} from '../constants/paths'
 
 export default class Auth {
   @observable username = ''
+
+  constructor(global) {
+    this.globalStore = global;
+  }
 
   updateLoginUserName(value) {
     this.username = value;
@@ -9,11 +19,46 @@ export default class Auth {
 
   login() {
     // 连接 socket.io
-    this.connect(this.username, 1);
+    this.globalStore.connect()
+      .then((client) => {
+        client.emit('login', { username: this.username });
+        this.addListeners(client);
+      })
+      .catch(() => {});
   }
 
   logout() {
-    const { client } = this;
+    const { client } = this.globalStore;
     client.emit('logout');
+  }
+
+  // 一些和 Auth 相关的监听
+  addListeners(client) {
+    client.on('loginSuccess', ({ user }) => {
+      console.log('login success', user.name);
+      this.globalStore.user = user;
+      Taro.atMessage({
+        type: 'success',
+        message: '登录成功',
+      });
+      Taro.setStorageSync('user', user);
+      setTimeout(() => {
+        Taro.redirectTo({
+          url: hallPath,
+        });
+      }, 500);
+    });
+    client.on('logoutSuccess', () => {
+      Taro.removeStorageSync('user');
+      Taro.atMessage({
+        type: 'success',
+        message: '注销成功',
+      });
+      setTimeout(() => {
+        Taro.redirectTo({
+          url: loginPath,
+        });
+      }, 500);
+    });
   }
 }

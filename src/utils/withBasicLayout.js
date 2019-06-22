@@ -6,8 +6,6 @@ import {
   AtTabBar,
 } from 'taro-ui';
 
-// import { checkLogin, redirectLogin, redirectOfflineTipPage } from './index';
-
 export const tabList = [
   { iconType: 'home' },
   { iconType: 'lightning-bolt' },

@@ -13,6 +13,7 @@ import { observer, inject } from '@tarojs/mobx';
 import './index.less';
 import { validateUserName } from '../../utils';
 
+@inject('auth')
 @inject('global')
 @observer
 export default class Login extends Taro.Component {
@@ -21,13 +22,13 @@ export default class Login extends Taro.Component {
   }
 
   updateLoginUserName = (value) => {
-    const { global } = this.props;
-    global.updateLoginUserName(value);
+    const { auth } = this.props;
+    auth.updateLoginUserName(value);
   }
 
   login = () => {
-    const { global } = this.props;
-    const { username } = global;
+    const { auth } = this.props;
+    const { username } = auth;
     const error = validateUserName(username);
     if (error !== undefined) {
       Taro.atMessage({
@@ -36,7 +37,7 @@ export default class Login extends Taro.Component {
       });
       return;
     }
-    global.login();
+    auth.login();
   }
 
   switchOfflineMode = () => {

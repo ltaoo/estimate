@@ -61,7 +61,7 @@ export default class User extends Taro.Component {
                 <View className='at-list__item-content item-content'>
                   <View className='item-content__info'>
                     <View className='item-content__info-title'>{user.name}</View>
-                    <View className='item-content__info-note'>标题文字</View>
+                    <View className='item-content__info-note'>{user.id}</View>
                   </View>
                   <View className='at-list__item-extra item-extra'></View>
                 </View>
