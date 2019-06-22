@@ -24,7 +24,7 @@ export default () => {
       }
     }
 
-    const wrappedComponent = inject('global')(observer(HOC));
+    const wrappedComponent = inject('auth')(observer(HOC));
     return wrappedComponent;
   }
 }

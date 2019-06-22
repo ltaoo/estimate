@@ -5,42 +5,24 @@ import {
 } from '@tarojs/components';
 import {
   AtButton,
-  AtTabBar,
   AtAvatar,
-  AtMessage,
   AtActionSheet,
   AtActionSheetItem,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
 import HeadCard from '../../components/HeadCard';
-import { checkLogin, redirectLogin } from '../../utils';
-import { tabList } from '../../constants';
+import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
+@withBasicLayout()
 @inject('global')
 @observer
 export default class User extends Taro.Component {
   state = {
     actionSheetVisible: false,
   };
-
-  componentDidMount() {
-    const { path } = this.$router;
-    const { global } = this.props;
-    global.init();
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
-    global.changeTabBarIndex(path);
-  }
-
-  handleClickTabBar = (value) => {
-    const { global } = this.props;
-    global.changeTabBarIndex(value);
-  }
 
   showActionSheet = () => {
     const { actionSheetVisible } = this.state;
@@ -62,7 +44,7 @@ export default class User extends Taro.Component {
 
   render() {
     const { actionSheetVisible } = this.state;
-    const { global: { user, currentTabBarIndex } } = this.props;
+    const { global: { user } } = this.props;
     return (
       <View>
         <HeadCard title='用户中心' desc='修改用户名或者注销' />
@@ -82,13 +64,6 @@ export default class User extends Taro.Component {
             <Text style={{ color: 'red' }}>注销</Text>
           </AtActionSheetItem>
         </AtActionSheet>
-        <AtTabBar
-          fixed
-          tabList={tabList}
-          onClick={this.handleClickTabBar}
-          current={currentTabBarIndex}
-        />
-        <AtMessage />
       </View>
     );
   }

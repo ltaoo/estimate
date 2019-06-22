@@ -3,7 +3,8 @@ import { Provider, onError } from '@tarojs/mobx';
 import 'taro-ui/dist/style/index.scss';
 
 import Index from './pages/index';
-import globalStore from './store';
+// import globalStore from './store';
+import GlobalStore from './store/Global';
 
 import './app.less';
 import './public/iconfont.css';
@@ -14,8 +15,11 @@ import './public/iconfont.css';
 //   require('nerv-devtools')
 // }
 
+const globalStore = new GlobalStore();
 const store = {
   global: globalStore,
+  hall: globalStore.hallStore,
+  auth: globalStore.authStore,
 };
 
 onError(error => {

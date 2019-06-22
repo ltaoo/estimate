@@ -3,9 +3,7 @@ import {
   View,
 } from '@tarojs/components';
 import {
-  AtTabBar,
   AtInput,
-  AtMessage,
   AtButton,
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
@@ -13,29 +11,17 @@ import { observer, inject } from '@tarojs/mobx';
 import Card from '../../components/Card';
 import HeadCard from '../../components/HeadCard';
 import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
-import { tabList } from '../../constants';
-import { roomPath } from '../../constants/paths';
-import withCheckAuth from '../../utils/withCheckAuth';
+import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
-@withCheckAuth()
+@withBasicLayout()
 @inject('global')
+@inject('hall')
 @observer
-export default class Hall extends Component {
+export default class HallPage extends Component {
   config = {
     navigationBarTitleText: '大厅'
-  }
-  /**
-   * 进入该页面，就是连接的服务器端，可以向全局广播「某某加入大厅」
-   */
-  componentDidMount() {
-    // const { global } = this.props;
-    // global.init();
-    // if (!checkLogin(global)) {
-    //   redirectLogin();
-    //   return;
-    // }
   }
 
   handleClickRoom = ({ title, status }) => {
@@ -44,21 +30,14 @@ export default class Hall extends Component {
     }
     const { global } = this.props;
     global.joinRoom(title);
-    // @TODO 如果加入房间出错，就不应该继续跳转
-    Taro.navigateTo({
-      url: roomPath,
-    });
   }
 
   /**
-   * 加入房间，就是指连接到服务器
+   * 创建房间
    */
   createRoom = () => {
     const { global } = this.props;
     global.createRoom();
-    Taro.navigateTo({
-      url: roomPath,
-    });
   }
 
   /**
@@ -92,7 +71,9 @@ export default class Hall extends Component {
   }
 
   render() {
-    const { global: { currentTabBarIndex, rooms } } = this.props;
+    const {
+      hall: { rooms },
+    } = this.props;
     return (
       <View className='hall-page'>
         <HeadCard title='大厅' desc='加入已存在的房间或者创建房间' />
@@ -113,13 +94,6 @@ export default class Hall extends Component {
             <AtButton className='btn--create-room' onClick={this.createRoom}>创建房间</AtButton>
           </Card>
         </View>
-        <AtMessage />
-        <AtTabBar
-          fixed
-          tabList={tabList}
-          onClick={this.handleClickTabBar}
-          current={currentTabBarIndex}
-        />
       </View>
     );
   }

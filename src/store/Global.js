@@ -1,28 +1,36 @@
 import Taro from '@tarojs/taro';
-import { observable } from 'mobx';
 import io from 'socket.io-client';
+import { observable } from 'mobx';
 
+import { socketUrl } from '../constants';
 import {
-  socketUrl,
-} from '../constants';
-import {
-  loginPath,
+  // loginPath,
   hallPath,
   roomPath,
-  inputPath,
-  resultPath,
-  estimatePath,
+  // inputPath,
+  // resultPath,
   offlineEstimatePath,
   userPath,
 } from '../constants/paths';
 import { sleep, redirectOfflineTipPage } from '../utils';
+import Hall from './Hall';
+import Auth from './Auth';
 
 function getInitialRoom() {
-  const initialRoom = {
+  return {
     id: null,
     members: [],
   };
-  return initialRoom;
+}
+
+function getInitialUser() {
+  return {
+    name: null,
+    joinedRoomId: null,
+    createdRoomId: null,
+    estimate: null,
+    estimating: null,
+  };
 }
 
 const PATH_MAP = [
@@ -31,22 +39,41 @@ const PATH_MAP = [
   userPath,
 ];
 
-const cachedUser = Taro.getStorageSync('user');
+export default class GlobalStore {
+  constructor() {
+    this.hallStore = new Hall(this);
+    this.authStore = new Auth(this);
+  }
 
-export default observable({
-  // 任何响应式的值，都必须先声明
-  loading: false,
+  // 当前是否离线
+  offlineMode = false
+  client = null
+  // 登录的用户信息
+  @observable user = getInitialUser()
+  // 应用初始化
   init() {
-    const { user, client } = this;
-    if (user && !client) {
-      // 如果本地存在登录信息，并且还没有连接，就主动连接
-      this.connect(user.name);
+    const currentPath = Taro.getCurrentPages()[0].$router.path;
+    this.changeTabBarIndex(PATH_MAP.indexOf(currentPath));
+    // 用户已经初始化
+    if (this.user && this.client) {
+      return;
     }
-  },
-  // client
-  client: null,
-  room: getInitialRoom(),
-  rooms: [],
+    Taro.showLoading({
+      title: 'loading'
+    })
+      .then(() => {
+        return sleep(1000);
+      })
+      .then(() => {
+        const cachedUser = Taro.getStorageSync('user');
+        if (cachedUser && !this.client) {
+          // 如果本地存在登录信息，并且还没有连接，就主动连接
+          this.connect(cachedUser.name);
+        }
+        this.user = cachedUser;
+        Taro.hideLoading();
+      });
+  }
   /**
    * 连接服务端
    * @param {string} username - 用户名
@@ -67,7 +94,8 @@ export default observable({
         this.offlineMode = true;
         redirectOfflineTipPage();
       });
-  },
+  }
+
   reconnect() {
     const { user } = this;
     this.loading = true;
@@ -92,15 +120,16 @@ export default observable({
       .finally(() => {
         this.loading = false;
       });
-  },
+  }
+
   addListeners() {
     const { client, user } = this;
     client.on('recoverSuccess', ({ room = getInitialRoom() }) => {
       console.log('recover from localstorage', user, room);
       if (user.joinedRoomId === null) {
-        Taro.redirectTo({
-          url: hallPath,
-        });
+        // Taro.redirectTo({
+        //   url: hallPath,
+        // });
         return;
       }
       this.user = user;
@@ -112,9 +141,9 @@ export default observable({
         && user.estimating === false
         && currentPath !== roomPath
       ) {
-        Taro.redirectTo({
-          url: roomPath,
-        });
+        // Taro.redirectTo({
+        //   url: roomPath,
+        // });
       }
     });
     client.on('loginSuccess', () => {
@@ -125,11 +154,11 @@ export default observable({
         message: '登录成功',
       });
       Taro.setStorageSync('user', user);
-      setTimeout(() => {
-        Taro.redirectTo({
-          url: hallPath,
-        });
-      }, 800);
+      // setTimeout(() => {
+      //   Taro.redirectTo({
+      //     url: hallPath,
+      //   });
+      // }, 800);
     });
     client.on('logoutSuccess', () => {
       Taro.removeStorageSync('user');
@@ -137,11 +166,11 @@ export default observable({
         type: 'success',
         message: '注销成功',
       });
-      setTimeout(() => {
-        Taro.redirectTo({
-          url: loginPath,
-        });
-      }, 800);
+      // setTimeout(() => {
+      //   Taro.redirectTo({
+      //     url: loginPath,
+      //   });
+      // }, 800);
     });
     // 初始化监听
     client.on('newConnection', () => {
@@ -187,9 +216,9 @@ export default observable({
       this.rooms = rooms;
     });
     client.on('startEstimate', () => {
-      Taro.navigateTo({
-        url: inputPath,
-      });
+      // Taro.navigateTo({
+      //   url: inputPath,
+      // });
     });
     client.on('estimate', ({ room }) => {
       console.log(`${user.name} give estimate`);
@@ -199,18 +228,18 @@ export default observable({
       this.showEstimate = true;
     });
     client.on('showEstimateResultSuccess', () => {
-      Taro.navigateTo({
-        url: resultPath,
-      });
+      // Taro.navigateTo({
+      //   url: resultPath,
+      // });
     });
     client.on('restartEstimateSuccess', () => {
       console.log('restartEstimate');
       this.estimate = undefined;
       this.user.estimate = null;
       this.showEstimate = false;
-      Taro.redirectTo({
-        url: inputPath,
-      });
+      // Taro.redirectTo({
+      //   url: inputPath,
+      // });
     });
     client.on('stopEstimateSuccess', () => {
       console.log('stop estimate');
@@ -221,9 +250,9 @@ export default observable({
       this.user.createdRoomId = null;
       Taro.setStorageSync('user', this.user);
       this.showEstimate = false;
-      Taro.redirectTo({
-        url: hallPath,
-      });
+      // Taro.redirectTo({
+      //   url: hallPath,
+      // });
     });
     // 错误
     client.on('err', ({ message, type }) => {
@@ -236,70 +265,17 @@ export default observable({
     client.on('disconnect', () => {
       console.log('和服务器断开连接，请点击重连');
     });
-  },
+  }
 
-  user: cachedUser,
-  // room
-  roomId: undefined,
-  inRoom: false,
-  users: [],
-  createRoom() {
-    if (!this.client) {
-      console.log('还未连接 socket ');
-      return;
-    }
-    this.client.emit('createRoom');
-  },
-  updateRoomId(value) {
-    this.roomId = value;
-  },
-  joinRoom(id) {
-    const roomId = id || this.roomId;
-    this.client.emit('joinRoom', { roomId });
-  },
-  leaveRoom() {
-    const { client, roomId } = this;
-    client.emit('leaveRoom', { roomId });
-  },
-
-  // estimate
-  estimate: undefined,
-  estimates: [],
-  showEstimate: false,
-  startEstimate() {
-    const { client, roomId } = this;
-    this.showEstimate = false;
-    client.emit('startEstimate', { roomId });
-  },
-  updateEstimate(value) {
-    this.estimate = value;
-    const { client } = this;
-    client.emit('estimate', { value });
+  switchOfflineMode() {
+    this.changeTabBarIndex(1);
+    this.offlineModel = true;
     Taro.navigateTo({
-      url: estimatePath,
+      url: offlineEstimatePath,
     });
-  },
-  showEstimateResult() {
-    const { client } = this;
-    client.emit('showEstimateResult');
-  },
-  restartEstimate() {
-    const { client } = this;
-    client.emit('restartEstimate');
-  },
-  stopEstimate() {
-    this.client.emit('stopEstimate');
-  },
+  }
 
-  isAdmintor() {
-    const { room, user } = this;
-    let isAdmintor = false;
-    if (room.id !== null && (room.id === user.createdRoomId)) {
-      isAdmintor = true;
-    }
-    return isAdmintor;
-  },
-  currentTabBarIndex: 0,
+  currentTabBarIndex = 0
   /**
    *
    * @param {string|number} index - 下标或者 path
@@ -316,23 +292,5 @@ export default observable({
     Taro.navigateTo({
       url: PATH_MAP[nextIndex],
     });
-  },
-
-  checkHasRoom() {
-    const { room } = this;
-    if (room === null) {
-      Taro.navigateTo({
-        url: hallPath,
-      });
-    }
-  },
-
-  offlineMode: false,
-  switchOfflineMode() {
-    this.changeTabBarIndex(1);
-    this.offlineModel = true;
-    Taro.navigateTo({
-      url: offlineEstimatePath,
-    });
-  },
-});
+  }
+}
