@@ -18,7 +18,6 @@ export default class Auth {
   }
 
   login() {
-    // 连接 socket.io
     this.globalStore.connect()
       .then((client) => {
         client.emit('login', { username: this.username });
@@ -28,6 +27,9 @@ export default class Auth {
 
   logout() {
     const { client } = this.globalStore;
+    if (client === null) {
+      return;
+    }
     client.emit('logout');
   }
 

@@ -12,12 +12,12 @@ import {
 } from 'taro-ui';
 import { observer, inject } from '@tarojs/mobx';
 
-import HeadCard from '../../components/HeadCard';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
 @withBasicLayout()
+@inject('auth')
 @inject('global')
 @observer
 export default class User extends Taro.Component {
@@ -39,8 +39,8 @@ export default class User extends Taro.Component {
   }
 
   logout = () => {
-    const { global } = this.props;
-    global.logout();
+    const { auth } = this.props;
+    auth.logout();
   }
 
   render() {
@@ -48,7 +48,6 @@ export default class User extends Taro.Component {
     const { global: { user } } = this.props;
     return (
       <View className='user-page'>
-        <HeadCard title='用户中心' desc='修改用户名或者注销' />
         <View className='user-page__content'>
           <AtList>
             <View className='at-list__item at-list__item--thumb at-list__item--multiple'>
@@ -61,7 +60,7 @@ export default class User extends Taro.Component {
                 <View className='at-list__item-content item-content'>
                   <View className='item-content__info'>
                     <View className='item-content__info-title'>{user.name}</View>
-                    <View className='item-content__info-note'>{user.id}</View>
+                    <View className='item-content__info-note'>{user.uuid}</View>
                   </View>
                   <View className='at-list__item-extra item-extra'></View>
                 </View>

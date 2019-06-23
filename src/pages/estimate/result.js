@@ -15,7 +15,7 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import Card from '../../components/Card';
-import { checkIsAdmintor, checkLogin, redirectLogin } from '../../utils';
+import { checkIsAdmintor } from '../../utils';
 import { computeEstimates } from './utils';
 import withBasicLayout from '../../utils/withBasicLayout';
 
@@ -23,21 +23,13 @@ import './index.less';
 
 @withBasicLayout()
 @inject('global')
+@inject('hall')
+@inject('estimate')
 @observer
 export default class Result extends Component {
   state = {
     actionSheetVisible: false,
   };
-
-  componentDidMount() {
-    const { global } = this.props;
-
-    if (!checkLogin(global)) {
-      redirectLogin();
-      return;
-    }
-    global.init();
-  }
 
   showActionSheet = () => {
     const { actionSheetVisible } = this.state;
@@ -53,23 +45,23 @@ export default class Result extends Component {
   }
 
   restartEstimate = () => {
-    const { global } = this.props;
-    global.restartEstimate();
+    const { estimate } = this.props;
+    estimate.restartEstimate();
   }
 
   endEstimate = () => {
-    const { global } = this.props;
-    global.stopEstimate();
+    const { estimate } = this.props;
+    estimate.stopEstimate();
   }
 
   render() {
     const { actionSheetVisible } = this.state;
-    const { global } = this.props;
-    const { room } = global;
+    const { hall, global } = this.props;
+    const { user } = global;
+    const { room } = hall;
     const estimates = room.members;
-    const isAdmintor = checkIsAdmintor();
+    const isAdmintor = checkIsAdmintor({ user, room });
     const stat = computeEstimates(estimates);
-    console.log(stat, estimates);
     const estimateDetails = estimates
       .sort((a, b) => {
         return b.estimate - a.estimate;
@@ -96,8 +88,14 @@ export default class Result extends Component {
           </Card>
           {isAdmintor && (
             <View>
-              <AtButton type='primary' onClick={this.restartEstimate}>重新开始估时</AtButton>
-              <AtButton className='btn--stop-estimate' onClick={this.showActionSheet}>结束估时</AtButton>
+              <AtButton
+                type='primary'
+                onClick={this.restartEstimate}
+              >重新开始估时</AtButton>
+              <AtButton
+                className='btn--stop-estimate'
+                onClick={this.showActionSheet}
+              >结束估时</AtButton>
             </View>
           )}
           <AtActionSheet

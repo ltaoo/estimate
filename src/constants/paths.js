@@ -42,6 +42,10 @@ export const headCardProps = new Proxy({
     title: '估时结果',
     desc: '统计估时结果',
   }),
+  [userPath]: () => ({
+    title: '用户中心',
+    desc: '修改用户名或者注销',
+  }),
 }, {
   get: (target, self) => {
     if (self in target) {

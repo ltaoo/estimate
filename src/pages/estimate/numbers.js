@@ -24,9 +24,14 @@ import './index.less';
 @inject('estimate')
 @observer
 export default class Estimate extends Component {
+  componentWillUnmount() {
+    const { estimate } = this.props;
+    estimate.clearEstimate();
+  }
+
   showResult = () => {
-    const { global } = this.props;
-    global.showEstimateResult();
+    const { estimate } = this.props;
+    estimate.showEstimateResult();
   }
 
   render() {
