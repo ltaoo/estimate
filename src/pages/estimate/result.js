@@ -20,6 +20,7 @@ import { computeEstimates } from './utils';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
+import { roomPath } from '../../constants/paths';
 
 @withBasicLayout()
 @inject('global')
@@ -54,12 +55,20 @@ export default class Result extends Component {
     estimate.stopEstimate();
   }
 
+  backToRoom = () => {
+    const { global } = this.props;
+    const { user } = global;
+    Taro.navigateTo({
+      url: `${roomPath}?id=${user.joinedRoomId}`,
+    });
+  }
+
   render() {
     const { actionSheetVisible } = this.state;
-    const { hall, global } = this.props;
+    const { hall, global, estimate } = this.props;
     const { user } = global;
     const { room } = hall;
-    const estimates = room.members;
+    const { estimates } = estimate;
     const isAdmintor = checkIsAdmintor({ user, room });
     const stat = computeEstimates(estimates);
     const estimateDetails = estimates
@@ -98,6 +107,10 @@ export default class Result extends Component {
               >结束估时</AtButton>
             </View>
           )}
+          {/* <AtButton
+            className='btn--stop-estimate'
+            onClick={this.backToRoom}
+          >回到房间</AtButton> */}
           <AtActionSheet
             isOpened={actionSheetVisible}
             cancelText='取消'

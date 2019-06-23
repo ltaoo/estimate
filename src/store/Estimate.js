@@ -172,7 +172,8 @@ export default class Estimate {
     client.on('showEstimateResultSuccess', () => {
     });
 
-    client.on('globalShowEstimateResultSuccess', () => {
+    client.on('globalShowEstimateResultSuccess', ({ estimates }) => {
+      this.estimates = estimates;
       Taro.navigateTo({
         url: resultPath,
       });

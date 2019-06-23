@@ -99,7 +99,7 @@ export default class Room extends Component {
             </AtButton>
           )}
           {room.status === ROOM_STATUS.STARTED && (
-            <AtButton onClick={this.backToInputEstimate}>进入估时</AtButton>
+            <AtButton className='btn--back-estimate' onClick={this.backToInputEstimate}>返回估时</AtButton>
           )}
           <Card title={memberNumberTitle}>
             <View>

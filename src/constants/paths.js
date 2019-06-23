@@ -40,7 +40,7 @@ export const headCardProps = new Proxy({
   }),
   [resultPath]: () => ({
     title: '估时结果',
-    desc: '统计估时结果',
+    desc: '统计估时结果，确认无误后组长重新开始估时',
   }),
   [userPath]: () => ({
     title: '用户中心',
