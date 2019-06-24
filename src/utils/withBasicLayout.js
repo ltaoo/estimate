@@ -18,24 +18,20 @@ export default () => {
     class HOC extends Taro.Component {
       constructor(props) {
         super(props);
-        console.log('consturctor call time');
-
         const { global } = this.props;
         const currentPath = this.$router.path;
         global.resetInitial();
+        Taro.showLoading({
+          title: '加载数据中...'
+        });
         global.init({ currentPath });
       }
       componentDidMount() {
         const { global } = this.props;
         setTimeout(() => {
+          Taro.hideLoading();
           global.setInitial();
         }, 500);
-      }
-
-      componentWillUnmount() {
-        console.log('basiclayout unmount');
-        const { global } = this.props;
-        global.resetInitial();
       }
 
       handleClickTabBar = (value) => {
@@ -44,12 +40,12 @@ export default () => {
       }
 
       render() {
-        const { global: { initial, client, currentTabBarIndex } } = this.props;
+        const { global: { initial, currentTabBarIndex } } = this.props;
         let content = (
           <Component {...this.props} />
         );
         const { params, path } = this.$router;
-        if (client === null && initial === true) {
+        if (initial === true) {
           content = (
             <Skeleton rows={6} />
           );

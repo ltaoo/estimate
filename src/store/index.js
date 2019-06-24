@@ -61,11 +61,8 @@ export default class GlobalStore {
       redirectLogin();
       return;
     }
-    Taro.showLoading({
-      title: '加载数据中...'
-    })
+    sleep(1000)
       .then(() => {
-        return sleep(1000);
       })
       .then(() => {
         this.user = cachedUser;
@@ -85,9 +82,6 @@ export default class GlobalStore {
           type: 'error',
           message: '连接服务失败，请使用离线模式',
         });
-      })
-      .finally(() => {
-        Taro.hideLoading();
       });
   }
   /**
