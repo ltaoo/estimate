@@ -4,7 +4,6 @@ import {
   Text,
 } from '@tarojs/components';
 import {
-  AtAvatar,
   AtActionSheet,
   AtActionSheetItem,
   AtList,
@@ -15,10 +14,11 @@ import { observer, inject } from '@tarojs/mobx';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
+import UserListItem from '../../components/UserListItem';
 
 @withBasicLayout()
-@inject('auth')
 @inject('global')
+@inject('auth')
 @observer
 export default class User extends Taro.Component {
   state = {
@@ -50,22 +50,7 @@ export default class User extends Taro.Component {
       <View className='user-page'>
         <View className='user-page__content'>
           <AtList>
-            <View className='at-list__item at-list__item--thumb at-list__item--multiple'>
-              <View className='at-list__item-container'>
-                <View className='at-list__item-thumb item-thumb item-avatar'>
-                  <View className='taro-img item-thumb__info'>
-                    <AtAvatar text={user.name}></AtAvatar>
-                  </View>
-                </View>
-                <View className='at-list__item-content item-content'>
-                  <View className='item-content__info'>
-                    <View className='item-content__info-title'>{user.name}</View>
-                    <View className='item-content__info-note'>{user.uuid}</View>
-                  </View>
-                  <View className='at-list__item-extra item-extra'></View>
-                </View>
-              </View>
-            </View>
+            <UserListItem user={user} />
             <AtListItem title='修改名称' arrow='right' />
             <AtListItem title='退出' onClick={this.showActionSheet} arrow='right' />
           </AtList>

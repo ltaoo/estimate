@@ -7,21 +7,18 @@ import {
 } from 'taro-ui';
 
 import { headCardProps } from '../constants/paths';
+import { tabList } from '../constants';
 import HeadCard from '../components/HeadCard';
 import Skeleton from '../components/Skeleton';
-import './index.less';
 
-export const tabList = [
-  { iconType: 'home' },
-  { iconType: 'lightning-bolt' },
-  { iconType: 'user' }
-];
+import './index.less';
 
 export default () => {
   return (Component) => {
     class HOC extends Taro.Component {
       constructor(props) {
         super(props);
+        console.log('consturctor call time');
 
         const { global } = this.props;
         const currentPath = this.$router.path;
@@ -74,7 +71,6 @@ export default () => {
       }
     }
 
-    const wrappedComponent = inject('global')(inject('auth')(observer(HOC)));
-    return wrappedComponent;
+    return inject('global')(observer(HOC));
   }
 }

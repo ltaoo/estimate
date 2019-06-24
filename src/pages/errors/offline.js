@@ -30,7 +30,6 @@ export default class OfflineError extends Taro.Component {
 
   render() {
     const { global: { loading } } = this.props;
-    console.log('loading', loading);
     return (
       <View className='offline'>
         <View className='offline__icon'>
