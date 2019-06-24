@@ -17,6 +17,10 @@ export const userPath = '/pages/person/index';
 export const offlineErrorPath = '/pages/errors/offline';
 
 export const headCardProps = new Proxy({
+  [home]: () => ({
+    title: '首页',
+    desc: '查看帮助',
+  }),
   [hallPath]: () => ({
     title: '大厅',
     desc: '加入已存在的房间或者创建房间',

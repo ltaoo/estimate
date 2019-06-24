@@ -56,6 +56,11 @@ export default class HallPage extends Component {
     });
   }
 
+  leaveRoom = () => {
+    const { hall } = this.props;
+    hall.leaveRoom();
+  }
+
   /**
    * 加入指定房间
    * @param {string} value - 房间 id
@@ -86,12 +91,22 @@ export default class HallPage extends Component {
     return (
       <View className='hall-page'>
         <View className='page__content hall-page__content'>
-          <Card title='已加入的房间'>
-            <AtButton
-              type='primary'
-              onClick={this.backToRoom}
-            >返回房间 {user.joinedRoomId}</AtButton>
-          </Card>
+          {user.joinedRoomId !== null && <Card title='已加入的房间'>
+            <View className='at-row'>
+              <View className='at-col'>
+                <AtButton
+                  type='primary'
+                  onClick={this.backToRoom}
+                >返回房间 {user.joinedRoomId}</AtButton>
+              </View>
+              <View className='at-col'>
+                <AtButton
+                  type='danger'
+                  onClick={this.leaveRoom}
+                >退出房间 {user.joinedRoomId}</AtButton>
+              </View>
+            </View>
+          </Card>}
           <View>
             <Card title='输入房间编号或创建房间'>
               <AtInput
