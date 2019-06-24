@@ -81,7 +81,6 @@ export default class Estimate {
     client.emit('stopEstimate');
   }
   addListeners(client) {
-    console.log('add estimate listeners');
     client.on('startEstimateSuccess', ({ user, room }) => {
       this.globalStore.user = user;
       this.globalStore.hallStore.room = room;
@@ -92,26 +91,26 @@ export default class Estimate {
         url: inputPath,
       });
     });
-    client.on('backEstimateSuccess', ({ user, room }) => {
-      console.log('back estimate', user, room.members);
-      this.globalStore.user = user;
-      this.globalStore.hallStore.room = room;
-      const estimates = room.members;
-      this.estimates = estimates;
-      const {
-        estimatedMembers,
-        unestimatedMembers,
-      } = computed(estimates);
-      this.estimatedMembers = estimatedMembers;
-      this.unestimatedMembers = unestimatedMembers;
-      this.showEstimate = estimates.every(e => e.estimate !== null);
-    });
-    client.on('globalBackEstimateSuccess', ({ user, room }) => {
-      Taro.atMessage({
-        message: `${user.name} 回到了房间`,
-      });
-      this.globalStore.hallStore.room = room;
-    });
+    // client.on('backEstimateSuccess', ({ user, room }) => {
+    //   console.log('back estimate', user, room.members);
+    //   this.globalStore.user = user;
+    //   this.globalStore.hallStore.room = room;
+    //   const estimates = room.members;
+    //   this.estimates = estimates;
+    //   const {
+    //     estimatedMembers,
+    //     unestimatedMembers,
+    //   } = computed(estimates);
+    //   this.estimatedMembers = estimatedMembers;
+    //   this.unestimatedMembers = unestimatedMembers;
+    //   this.showEstimate = estimates.every(e => e.estimate !== null);
+    // });
+    // client.on('globalBackEstimateSuccess', ({ user, room }) => {
+    //   Taro.atMessage({
+    //     message: `${user.name} 回到了房间`,
+    //   });
+    //   this.globalStore.hallStore.room = room;
+    // });
     client.on('estimateSuccess', ({ user, room }) => {
       console.log(`${user.name} give estimate`);
       this.globalStore.user = user;
@@ -123,7 +122,6 @@ export default class Estimate {
     client.on('globalEstimateSuccess', ({ user, room, showEstimate }) => {
       console.log(`${user.name} 给出了估时`);
       const { user: self } = this.globalStore;
-      self.showResult = true;
       this.globalStore.hallStore.room = room;
       const estimates = room.members;
       this.estimates = estimates;
@@ -167,6 +165,7 @@ export default class Estimate {
     });
 
     client.on('showEstimateResultSuccess', () => {
+      this.globalStore.user.showResult = true;
     });
 
     client.on('globalShowEstimateResultSuccess', ({ estimates }) => {

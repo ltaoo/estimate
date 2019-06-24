@@ -70,15 +70,14 @@ export default class Hall {
       this.rooms = rooms;
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
-      console.log(`${user.name} join room, now member of room is`, room);
       this.globalStore.user = user;
-      this.room = room;
+      // 检查现在是不是已经在房间页面，如果是就不跳转
       Taro.navigateTo({
         url: `${roomPath}?id=${room.id}`,
       });
     });
     client.on('globalJoinRoomSuccess', ({ user, room }) => {
-      console.log('other people join room success', user);
+      console.log(`${user.name} join room success`);
       Taro.atMessage({
         type: 'success',
         message: `${user.name} 加入了房间`,

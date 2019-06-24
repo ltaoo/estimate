@@ -4,29 +4,19 @@ import { observable } from 'mobx';
 
 import { socketUrl } from '../constants';
 import {
-  // loginPath,
   hallPath,
-  // roomPath,
-  // inputPath,
-  // resultPath,
   offlineEstimatePath,
+  inputPath,
+  estimatePath,
   userPath,
 } from '../constants/paths';
 import {
   sleep,
-  // redirectOfflineTipPage,
   redirectLogin,
 } from '../utils';
 import Hall from './Hall';
 import Auth from './Auth';
 import Estimate from './Estimate';
-
-// function getInitialRoom() {
-//   return {
-//     id: null,
-//     members: [],
-//   };
-// }
 
 function getInitialUser() {
   return {
@@ -87,7 +77,7 @@ export default class GlobalStore {
       })
       .then((client) => {
         console.log('client emit recover event');
-        client.emit('recover', { username: cachedUser.name });
+        client.emit('recover', { username: cachedUser.uuid });
       })
       .catch(() => {
         // redirectOfflineTipPage();
@@ -139,29 +129,53 @@ export default class GlobalStore {
     authStore.addListeners(client);
     estimateStore.addListeners(client);
 
-    client.on('recoverSuccess', ({ user, rooms }) => {
+    client.on('recoverSuccess', ({ user, room, rooms }) => {
       console.log('recover success', user, rooms);
       this.hallStore.rooms = rooms;
+      this.hallStore.room = room;
       this.globalStore.user = user;
       Taro.setStorageSync('user', user);
       if (user.joinedRoomId === null) {
         return;
       }
-      // 根据用户状态的不同，需要从服务器端取的数据也不同
-      if (user.joinedRoomId !== null && user.estimating !== true) {
-        console.log('加入房间，但是还没开始估时');
-        client.emit('joinRoom', { roomId: user.joinedRoomId });
-        return;
-      }
+      // 只要加入了房间，就先向服务端发起加入房间
+      console.log('加入房间，但是还没开始估时');
+      client.emit('joinRoom', { roomId: user.joinedRoomId });
       // 已经开始估时
-      if (user.joinedRoomId !== null && user.estimating === true) {
-        console.log('加入房间并且已经开始估时');
-        client.emit('backEstimate');
+      if (
+        user.estimating === true
+        && user.estimate === null
+        && user.showResult === false
+      ) {
+        console.log('加入房间并且已经开始估时，但自己没有给出估时，到选择点数页');
+        // client.emit('backEstimate');
+        Taro.navigateTo({
+          url: inputPath,
+        });
         return;
       }
-      if (user.joinedRoomId !== null && user.showResult === true) {
+      if (
+        user.estimating === true
+        && user.estimate !== null
+        && user.showResult === false
+      ) {
+        console.log('加入房间并且已经开始估时，自己给出了估时，到展示点数页');
+        // client.emit('backEstimate');
+        Taro.navigateTo({
+          url: estimatePath,
+        });
+        return;
+      }
+      // 估时完成
+      if (
+        user.showResult === true
+      ) {
         console.log('加入房间并且已经展示结果');
-        client.emit('backShowResult');
+        client.emit('showEstimateResult');
+        // client.emit('backShowResult');
+        // Taro.navigateTo({
+        //   url: estimatePath,
+        // });
         return;
       }
     });

@@ -1,4 +1,4 @@
-export const socketUrl = 'http://10.67.160.134:3000';
+export const socketUrl = 'http://192.168.1.3:3000';
 
 export const tabList = [
   { iconType: 'home' },
