@@ -3,8 +3,7 @@ import { Provider, onError } from '@tarojs/mobx';
 import 'taro-ui/dist/style/index.scss';
 
 import Index from './pages/index';
-// import globalStore from './store';
-import GlobalStore from './store/Global';
+import GlobalStore from './store';
 
 import './app.less';
 import './public/iconfont.css';

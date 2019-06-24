@@ -22,9 +22,11 @@ export default () => {
     class HOC extends Taro.Component {
       constructor(props) {
         super(props);
+
         const { global } = this.props;
+        const currentPath = this.$router.path;
         global.resetInitial();
-        global.init();
+        global.init({ currentPath });
       }
       componentDidMount() {
         const { global } = this.props;
