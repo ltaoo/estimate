@@ -44,9 +44,10 @@ class App extends Component {
       'pages/offline/index',
       'pages/offline/result',
       // 个人中心
-      'pages/user/index',
+      'pages/person/index',
       // 错误页
       'pages/errors/offline',
+      'pages/demo/index',
     ],
     window: {
       backgroundTextStyle: 'light',

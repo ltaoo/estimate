@@ -12,9 +12,9 @@ import {
 import { observer, inject } from '@tarojs/mobx';
 
 import withBasicLayout from '../../utils/withBasicLayout';
-
-import './index.less';
 import UserListItem from '../../components/UserListItem';
+
+// import './index.less';
 
 @withBasicLayout()
 @inject('global')

@@ -50,7 +50,7 @@ export default class GlobalStore {
   // 应用初始化
   init({ currentPath }) {
     console.log('[type]', 'init', '[payload]', { currentPath });
-    this.changeTabBarIndex(PATH_MAP.indexOf(currentPath));
+    this.changeTabBarIndex(PATH_MAP.indexOf(currentPath), false);
     // 用户已经初始化
     if (this.client && this.user.uuid) {
       return;
@@ -224,8 +224,9 @@ export default class GlobalStore {
   /**
    * 切换页面底部 tabbar
    * @param {string|number} index - 下标或者 path
+   * @param {boolean} [redirect=true] - 是否跳转至页面
    */
-  changeTabBarIndex(index) {
+  changeTabBarIndex(index, redirect = true) {
     let nextIndex = index;
     if (typeof index === 'string') {
       nextIndex = PATH_MAP.indexOf(index);
@@ -234,6 +235,9 @@ export default class GlobalStore {
       return;
     }
     this.currentTabBarIndex = nextIndex;
+    if (redirect === false) {
+      return;
+    }
     Taro.navigateTo({
       url: PATH_MAP[nextIndex],
     });

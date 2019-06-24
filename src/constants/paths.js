@@ -12,7 +12,7 @@ export const resultPath = '/pages/estimate/result';
 export const offlineEstimatePath = '/pages/offline/index';
 export const offlineEstimateCardPath = '/pages/offline/result';
 // 用户中心
-export const userPath = '/pages/user/index';
+export const userPath = '/pages/person/index';
 // 错误页
 export const offlineErrorPath = '/pages/errors/offline';
 
@@ -45,6 +45,10 @@ export const headCardProps = new Proxy({
   [userPath]: () => ({
     title: '用户中心',
     desc: '修改用户名或者注销',
+  }),
+  '/pages/demo/index': () => ({
+    title: '测试',
+    desc: '用来测试的页面',
   }),
 }, {
   get: (target, self) => {
