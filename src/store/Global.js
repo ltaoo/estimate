@@ -127,29 +127,6 @@ export default class GlobalStore {
   }
 
   reconnect() {
-    const { user } = this;
-    this.loading = true;
-    // 为了不让页面看起来奇怪，延迟 500 毫秒展示出 loading 后再真实请求接口
-    sleep(500)
-      .then(() => {
-        return Taro.request({
-          url: `${socketUrl}/api/ping`,
-          mode: 'cors',
-        });
-      })
-      .then(() => {
-        this.client = io(`${socketUrl}?username=${user.name}`);
-        this.addListeners();
-      })
-      .catch(() => {
-        Taro.atMessage({
-          type: 'error',
-          message: '连接失败，请使用离线模式',
-        });
-      })
-      .finally(() => {
-        this.loading = false;
-      });
   }
 
   addListeners(client) {
@@ -165,7 +142,12 @@ export default class GlobalStore {
     client.on('recoverSuccess', ({ user, rooms }) => {
       console.log('recover success', user, rooms);
       this.hallStore.rooms = rooms;
-      this.user = user;
+      this.globalStore.user = user;
+      Taro.setStorageSync('user', user);
+      if (user.joinedRoomId === null) {
+        return;
+      }
+      // 根据用户状态的不同，需要从服务器端取的数据也不同
       if (user.joinedRoomId !== null && user.estimating !== true) {
         console.log('加入房间，但是还没开始估时');
         client.emit('joinRoom', { roomId: user.joinedRoomId });
@@ -175,6 +157,12 @@ export default class GlobalStore {
       if (user.joinedRoomId !== null && user.estimating === true) {
         console.log('加入房间并且已经开始估时');
         client.emit('backEstimate');
+        return;
+      }
+      if (user.joinedRoomId !== null && user.showResult === true) {
+        console.log('加入房间并且已经展示结果');
+        client.emit('backShowResult');
+        return;
       }
     });
     client.on('recoverFail', ({ message }) => {

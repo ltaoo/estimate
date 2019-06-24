@@ -9,6 +9,7 @@ import {
 import { headCardProps } from '../constants/paths';
 import HeadCard from '../components/HeadCard';
 import Skeleton from '../components/Skeleton';
+import './index.less';
 
 export const tabList = [
   { iconType: 'home' },

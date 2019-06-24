@@ -63,7 +63,6 @@ export default class Hall {
   addListeners(client) {
     client.on('createRoomSuccess', ({ user, room }) => {
       console.log('create room success', user, room);
-      Taro.setStorageSync('user', user);
       this.globalStore.user = user;
       this.room = room;
     });
@@ -72,7 +71,6 @@ export default class Hall {
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} join room, now member of room is`, room);
-      Taro.setStorageSync('user', user);
       this.globalStore.user = user;
       this.room = room;
       Taro.navigateTo({
@@ -96,7 +94,6 @@ export default class Hall {
     });
     client.on('leaveRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} leave room`, room.members);
-      Taro.setStorageSync('user', user);
       this.globalStore.user = user;
       this.room = room;
     });

@@ -114,7 +114,6 @@ export default class Estimate {
     });
     client.on('estimateSuccess', ({ user, room }) => {
       console.log(`${user.name} give estimate`);
-      // Taro.setStorageSync('user', user);
       this.globalStore.user = user;
       this.globalStore.hallStore.room = room;
       Taro.navigateTo({
@@ -125,7 +124,6 @@ export default class Estimate {
       console.log(`${user.name} 给出了估时`);
       const { user: self } = this.globalStore;
       self.showResult = true;
-      Taro.setStorageSync('user', self);
       this.globalStore.hallStore.room = room;
       const estimates = room.members;
       this.estimates = estimates;
@@ -157,7 +155,6 @@ export default class Estimate {
     client.on('clearEstimateSuccess', ({ user }) => {
       console.log(`${user.name} 取消估时成功`);
       this.globalStore.user = user;
-      Taro.setStorageSync('user', user);
     });
     // 有用户想重新选择估时
     client.on('globalClearEstimateSuccess', ({ user, room }) => {
@@ -195,7 +192,6 @@ export default class Estimate {
       this.globalStore.user.joinedRoomId = null;
       this.globalStore.user.createdRoomId = null;
       this.globalStore.user.showResult = false;
-      Taro.setStorageSync('user', this.user);
       this.showEstimate = false;
       Taro.redirectTo({
         url: hallPath,
