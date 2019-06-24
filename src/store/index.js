@@ -14,7 +14,6 @@ import {
   sleep,
   redirectLogin,
   isPrepareEstimate,
-  isStartedEstimate,
   isGivedEstimate,
   isShowEstimateResult,
 } from '../utils';
@@ -146,7 +145,7 @@ export default class GlobalStore {
     this.estimateStore.addListeners(client);
 
     client.on('reconnectSuccess', ({ user, room = getInitialRoom(), rooms }) => {
-      console.log('[client]', 'reconnect success', { user, rooms });
+      console.log('[client]', 'reconnect success', { user, room, rooms });
       this.hallStore.room = room;
       this.hallStore.rooms = rooms;
       this.user = user;
@@ -166,20 +165,19 @@ export default class GlobalStore {
       }
       if (isGivedEstimate(user)) {
         console.log('加入房间并且已经开始估时，自己给出了估时，到展示点数页');
-        // client.emit('backEstimate');
-        Taro.navigateTo({
-          url: estimatePath,
-        });
+
+        client.emit('estimate', { value: user.estimate });
+        if (this.currentPath !== estimatePath) {
+          Taro.navigateTo({
+            url: estimatePath,
+          });
+        }
         return;
       }
       // 估时完成
       if (isShowEstimateResult(user)) {
         console.log('加入房间并且已经展示结果');
         client.emit('showEstimateResult');
-        // client.emit('backShowResult');
-        // Taro.navigateTo({
-        //   url: estimatePath,
-        // });
         return;
       }
     });

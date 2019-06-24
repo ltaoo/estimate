@@ -13,7 +13,7 @@ import Skeleton from '../components/Skeleton';
 
 import './index.less';
 
-export default () => {
+export default ({ showHeadCard = true } = {}) => {
   return (Component) => {
     class HOC extends Taro.Component {
       constructor(props) {
@@ -53,7 +53,7 @@ export default () => {
         const cardProps = headCardProps[path](params);
         return (
           <View className='basic-layout'>
-            <HeadCard {...cardProps} />
+            {showHeadCard && <HeadCard {...cardProps} />}
             {content}
             <AtMessage />
             <AtTabBar

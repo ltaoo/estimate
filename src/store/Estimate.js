@@ -7,23 +7,7 @@ import {
   estimatePath,
   resultPath,
 } from '../constants/paths';
-import { checkIsAdmintor } from '../utils';
-
-function computed(estimates) {
-  const estimatedMembers = [];
-  const unestimatedMembers = [];
-  for (let i = 0, l = estimates.length; i < l; i += 1) {
-    if (estimates[i].estimate === null) {
-      unestimatedMembers.push(estimates[i]);
-    } else {
-      estimatedMembers.push(estimates[i]);
-    }
-  }
-  return {
-    estimatedMembers,
-    unestimatedMembers,
-  };
-}
+import { checkIsAdmintor, divideEstimates } from '../utils';
 
 export default class Estimate {
   // estimate
@@ -87,37 +71,22 @@ export default class Estimate {
     });
     client.on('globalStartEstimateSuccess', () => {
       this.globalStore.user.estimating = true;
-      Taro.navigateTo({
-        url: inputPath,
-      });
+      if (this.globalStore.currentPath !== inputPath) {
+        Taro.navigateTo({
+          url: inputPath,
+        });
+      }
     });
-    // client.on('backEstimateSuccess', ({ user, room }) => {
-    //   console.log('back estimate', user, room.members);
-    //   this.globalStore.user = user;
-    //   this.globalStore.hallStore.room = room;
-    //   const estimates = room.members;
-    //   this.estimates = estimates;
-    //   const {
-    //     estimatedMembers,
-    //     unestimatedMembers,
-    //   } = computed(estimates);
-    //   this.estimatedMembers = estimatedMembers;
-    //   this.unestimatedMembers = unestimatedMembers;
-    //   this.showEstimate = estimates.every(e => e.estimate !== null);
-    // });
-    // client.on('globalBackEstimateSuccess', ({ user, room }) => {
-    //   Taro.atMessage({
-    //     message: `${user.name} 回到了房间`,
-    //   });
-    //   this.globalStore.hallStore.room = room;
-    // });
     client.on('estimateSuccess', ({ user, room }) => {
       console.log(`${user.name} give estimate`);
       this.globalStore.user = user;
       this.globalStore.hallStore.room = room;
-      Taro.navigateTo({
-        url: estimatePath,
-      });
+      console.log(this.globalStore.currentPath, estimatePath);
+      if (this.globalStore.currentPath !== estimatePath) {
+        Taro.navigateTo({
+          url: estimatePath,
+        });
+      }
     });
     client.on('globalEstimateSuccess', ({ user, room, showEstimate }) => {
       console.log(`${user.name} 给出了估时`);
@@ -128,7 +97,7 @@ export default class Estimate {
       const {
         estimatedMembers,
         unestimatedMembers,
-      } = computed(estimates);
+      } = divideEstimates(estimates);
       this.estimatedMembers = estimatedMembers;
       this.unestimatedMembers = unestimatedMembers;
       this.showEstimate = estimates.every(e => e.estimate !== null);
@@ -153,6 +122,9 @@ export default class Estimate {
     client.on('clearEstimateSuccess', ({ user }) => {
       console.log(`${user.name} 取消估时成功`);
       this.globalStore.user = user;
+      Taro.navigateTo({
+        url: inputPath,
+      });
     });
     // 有用户想重新选择估时
     client.on('globalClearEstimateSuccess', ({ user, room }) => {
@@ -169,10 +141,13 @@ export default class Estimate {
     });
 
     client.on('globalShowEstimateResultSuccess', ({ estimates }) => {
+      console.log('show estimate result success', estimates);
       this.estimates = estimates;
-      Taro.navigateTo({
-        url: resultPath,
-      });
+      if (this.globalStore.currentPath !== resultPath) {
+        Taro.navigateTo({
+          url: resultPath,
+        });
+      }
     });
 
     client.on('globalRestartEstimateSuccess', () => {

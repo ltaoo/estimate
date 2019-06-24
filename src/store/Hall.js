@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 import { roomPath } from '../constants/paths';
-import { isPrepareEstimate, isWaitingMembers } from '../utils';
+import { isWaitingMembers } from '../utils';
 
 function initialRoom() {
   return {

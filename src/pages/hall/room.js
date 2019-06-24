@@ -89,7 +89,7 @@ export default class Room extends Component {
     return (
       <View className='room-page'>
         <View className='room-page__content'>
-          {(isAdmintor && user.estimating === null) && (
+          {(isAdmintor && user.estimating === false) && (
             <AtButton type='primary' onClick={this.startEstimate}>
               开始估时
             </AtButton>

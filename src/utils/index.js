@@ -101,3 +101,19 @@ export function isShowEstimateResult(user) {
   }
   return false;
 }
+
+export function divideEstimates(estimates) {
+  const estimatedMembers = [];
+  const unestimatedMembers = [];
+  for (let i = 0, l = estimates.length; i < l; i += 1) {
+    if (estimates[i].estimate === null) {
+      unestimatedMembers.push(estimates[i]);
+    } else {
+      estimatedMembers.push(estimates[i]);
+    }
+  }
+  return {
+    estimatedMembers,
+    unestimatedMembers,
+  };
+}

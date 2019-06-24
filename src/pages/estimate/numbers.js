@@ -18,13 +18,13 @@ import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
 
-@withBasicLayout()
+@withBasicLayout({ showHeadCard: false })
 @inject('global')
 @inject('hall')
 @inject('estimate')
 @observer
 export default class Estimate extends Component {
-  componentWillUnmount() {
+  reselectEstimate = () => {
     const { estimate } = this.props;
     estimate.clearEstimate();
   }
@@ -54,7 +54,8 @@ export default class Estimate extends Component {
       <View className='estimate-page'>
         <View className='number-card'><Text className={className} /></View>
         <View className='page__content'>
-          {(isAdmintor && showEstimate) && <AtButton onClick={this.showResult}>展示结果</AtButton>}
+          <AtButton type='primary' onClick={this.reselectEstimate}>重选点数</AtButton>
+          {(isAdmintor && showEstimate) && <AtButton className='btn--show-result' onClick={this.showResult}>展示结果</AtButton>}
           <Card title={estimatedTitle}>
             {estimatedMembers
               .map(item => (
