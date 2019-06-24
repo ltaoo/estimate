@@ -13,6 +13,7 @@ import RoomCard, { ROOM_STATUS } from '../../components/RoomCard';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
+import { roomPath } from '../../constants/paths';
 
 @withBasicLayout()
 @inject('hall')
@@ -48,9 +49,11 @@ export default class HallPage extends Component {
   }
 
   backToRoom = () => {
+    const { global: { user } } = this.props;
     // 回到房间
-    const { hall } = this.props;
-    hall.backToRoom();
+    Taro.navigateTo({
+      url: `${roomPath}?id=${user.joinedRoomId}`,
+    });
   }
 
   /**
@@ -77,11 +80,18 @@ export default class HallPage extends Component {
 
   render() {
     const {
+      global: { user },
       hall: { rooms },
     } = this.props;
     return (
       <View className='hall-page'>
         <View className='page__content hall-page__content'>
+          <Card title='已加入的房间'>
+            <AtButton
+              type='primary'
+              onClick={this.backToRoom}
+            >返回房间 {user.joinedRoomId}</AtButton>
+          </Card>
           <View>
             <Card title='输入房间编号或创建房间'>
               <AtInput

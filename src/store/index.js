@@ -30,6 +30,14 @@ function getInitialUser() {
   };
 }
 
+function getInitialRoom() {
+  return {
+    id: null,
+    members: [],
+    status: 'ENABLE',
+  };
+}
+
 const PATH_MAP = [
   hallPath,
   offlineEstimatePath,
@@ -131,7 +139,7 @@ export default class GlobalStore {
     this.authStore.addListeners(client);
     this.estimateStore.addListeners(client);
 
-    client.on('reconnectSuccess', ({ user, room, rooms }) => {
+    client.on('reconnectSuccess', ({ user, room = getInitialRoom(), rooms }) => {
       console.log('[client]', 'reconnect success', { user, rooms });
       this.hallStore.room = room;
       this.hallStore.rooms = rooms;

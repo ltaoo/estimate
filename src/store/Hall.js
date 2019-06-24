@@ -71,6 +71,7 @@ export default class Hall {
     });
     client.on('joinRoomSuccess', ({ user, room }) => {
       this.globalStore.user = user;
+      Taro.setStorageSync('user', user);
       // 检查现在是不是已经在房间页面，如果是就不跳转
       Taro.navigateTo({
         url: `${roomPath}?id=${room.id}`,

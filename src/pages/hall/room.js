@@ -27,16 +27,13 @@ import './index.less';
 @observer
 export default class Room extends Component {
   componentDidHide() {
-    console.log('room page hide');
     const { hall } = this.props;
     hall.leaveRoom();
   }
-
-  componentWillUnmount() {
-    console.log('room page un mount');
-    const { hall } = this.props;
-    hall.leaveRoom();
-  }
+  // componentWillUnmount() {
+  //   const { hall } = this.props;
+  //   hall.leaveRoom();
+  // }
 
   showLeaveRoomTipModal = () => {
     this.setState({
@@ -51,13 +48,12 @@ export default class Room extends Component {
   }
 
   handleLeaveRoom = () => {
-    console.log('leave room');
     this.showLeaveRoomTipModal();
   }
 
   leaveRoom = () => {
-    const { global } = this.props;
-    global.leaveRoom();
+    const { hall } = this.props;
+    hall.leaveRoom();
   }
 
   /**
