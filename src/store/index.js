@@ -13,6 +13,10 @@ import {
 import {
   sleep,
   redirectLogin,
+  isPrepareEstimate,
+  isStartedEstimate,
+  isGivedEstimate,
+  isShowEstimateResult,
 } from '../utils';
 
 import HallStore from './Hall';
@@ -52,12 +56,14 @@ export default class GlobalStore {
   }
 
   client = null
+  currentPath = null
   @observable initial = true
   // 登录的用户信息
   @observable user = getInitialUser()
   // 应用初始化
   init({ currentPath }) {
     console.log('[type]', 'init', '[payload]', { currentPath });
+    this.currentPath = currentPath;
     this.changeTabBarIndex(PATH_MAP.indexOf(currentPath), false);
     // 用户已经初始化
     if (this.client && this.user.uuid) {
@@ -149,26 +155,16 @@ export default class GlobalStore {
         return;
       }
       // 加入了房间，先向服务端发起加入房间
-      console.log('加入房间，但是还没开始估时');
       client.emit('joinRoom', { roomId: user.joinedRoomId });
       // 已经开始估时
-      if (
-        user.estimating === true
-        && user.estimate === null
-        && user.showResult === false
-      ) {
+      if (isPrepareEstimate(user)) {
         console.log('加入房间并且已经开始估时，但自己没有给出估时，到选择点数页');
-        // client.emit('backEstimate');
         Taro.navigateTo({
           url: inputPath,
         });
         return;
       }
-      if (
-        user.estimating === true
-        && user.estimate !== null
-        && user.showResult === false
-      ) {
+      if (isGivedEstimate(user)) {
         console.log('加入房间并且已经开始估时，自己给出了估时，到展示点数页');
         // client.emit('backEstimate');
         Taro.navigateTo({
@@ -177,9 +173,7 @@ export default class GlobalStore {
         return;
       }
       // 估时完成
-      if (
-        user.showResult === true
-      ) {
+      if (isShowEstimateResult(user)) {
         console.log('加入房间并且已经展示结果');
         client.emit('showEstimateResult');
         // client.emit('backShowResult');

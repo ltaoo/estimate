@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro';
 import { observable } from 'mobx';
 import { roomPath } from '../constants/paths';
+import { isPrepareEstimate, isWaitingMembers } from '../utils';
 
 function initialRoom() {
   return {
@@ -73,9 +74,12 @@ export default class Hall {
       this.globalStore.user = user;
       Taro.setStorageSync('user', user);
       // 检查现在是不是已经在房间页面，如果是就不跳转
-      Taro.navigateTo({
-        url: `${roomPath}?id=${room.id}`,
-      });
+      if (isWaitingMembers(user) && this.globalStore.currentPath !== roomPath) {
+        console.log('after join room success and navigate to room page');
+        Taro.navigateTo({
+          url: `${roomPath}?id=${room.id}`,
+        });
+      }
     });
     client.on('globalJoinRoomSuccess', ({ user, room }) => {
       console.log(`${user.name} join room success`);

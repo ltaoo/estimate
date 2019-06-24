@@ -46,7 +46,6 @@ export function sleep(time) {
   });
 }
 
-
 export function checkIsAdmintor({ user, room }) {
   let isAdmintor = false;
   if (user === null || room === null || room === undefined) {
@@ -59,4 +58,46 @@ export function checkIsAdmintor({ user, room }) {
     isAdmintor = true;
   }
   return isAdmintor;
+}
+
+export function isWaitingMembers(user) {
+  if (
+    user.joinedRoomId !== null
+    && user.estimating === false
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function isPrepareEstimate(user) {
+  if (
+    user.estimating === true
+    && user.estimate === null
+    && user.showResult === false
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function isGivedEstimate(user) {
+  if (
+    user.estimating === true
+    && user.estimate !== null
+    && user.showResult === false
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function isShowEstimateResult(user) {
+  if (
+    user.estimating === true
+    && user.showResult === true
+  ) {
+    return true;
+  }
+  return false;
 }
