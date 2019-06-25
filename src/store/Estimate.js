@@ -64,6 +64,15 @@ export default class Estimate {
     }
     client.emit('stopEstimate');
   }
+  updateEstimateResult(estimates) {
+    this.estimates = estimates;
+    const {
+      estimatedMembers,
+      unestimatedMembers,
+    } = divideEstimates(estimates);
+    this.estimatedMembers = estimatedMembers;
+    this.unestimatedMembers = unestimatedMembers;
+  }
   addListeners(client) {
     client.on('startEstimateSuccess', ({ user, room }) => {
       this.globalStore.user = user;
@@ -93,13 +102,7 @@ export default class Estimate {
       const { user: self } = this.globalStore;
       this.globalStore.hallStore.room = room;
       const estimates = room.members;
-      this.estimates = estimates;
-      const {
-        estimatedMembers,
-        unestimatedMembers,
-      } = divideEstimates(estimates);
-      this.estimatedMembers = estimatedMembers;
-      this.unestimatedMembers = unestimatedMembers;
+      this.updateEstimateResult(estimates);
       this.showEstimate = estimates.every(e => e.estimate !== null);
       Taro.atMessage({
         type: 'info',
@@ -130,6 +133,8 @@ export default class Estimate {
     client.on('globalClearEstimateSuccess', ({ user, room }) => {
       console.log(`${user.name} 取消了估时`);
       this.globalStore.hallStore.room = room;
+      this.updateEstimateResult(room.members);
+      this.showEstimate = false;
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 取消了估时`,
