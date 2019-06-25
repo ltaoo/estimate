@@ -177,6 +177,8 @@ export default class GlobalStore {
       // 估时完成
       if (isShowEstimateResult(user)) {
         console.log('加入房间并且已经展示结果');
+        // 但是这里可能当组长「重新开始估时」之前，退出了再重登，就刚好状态一直是 showResult = true
+        // 只能返回房间再开始估时，中途不能退出，或者增加 emit('resetShowResultStatus') 让服务端重置
         client.emit('showEstimateResult');
         return;
       }

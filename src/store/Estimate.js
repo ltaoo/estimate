@@ -12,7 +12,8 @@ import { checkIsAdmintor, divideEstimates } from '../utils';
 export default class Estimate {
   // estimate
   estimate = undefined
-  @observable showEstimate = false
+  // 这个应该是「房间」的状态，是否可以展示结果
+  @observable enableShowEstimateResult = false
   @observable estimates = []
   @observable estimatedMembers = []
   @observable unestimatedMembers = []
@@ -97,19 +98,19 @@ export default class Estimate {
         });
       }
     });
-    client.on('globalEstimateSuccess', ({ user, room, showEstimate }) => {
+    client.on('globalEstimateSuccess', ({ user, room }) => {
       console.log(`${user.name} 给出了估时`);
       const { user: self } = this.globalStore;
       this.globalStore.hallStore.room = room;
       const estimates = room.members;
       this.updateEstimateResult(estimates);
-      this.showEstimate = estimates.every(e => e.estimate !== null);
+      this.enableShowEstimateResult = estimates.every(e => e.estimate !== null);
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 给出了估时`,
       });
       // 提示管理员所有人都给出了时间
-      if (showEstimate && checkIsAdmintor({ user: self, room })) {
+      if (this.enableShowEstimateResult && checkIsAdmintor({ user: self, room })) {
         console.log('所有人都给出时间了，可以展示结果');
         Taro.showModal({
           title: '展示结果',
@@ -134,7 +135,7 @@ export default class Estimate {
       console.log(`${user.name} 取消了估时`);
       this.globalStore.hallStore.room = room;
       this.updateEstimateResult(room.members);
-      this.showEstimate = false;
+      this.enableShowEstimateResult = false;
       Taro.atMessage({
         type: 'info',
         message: `${user.name} 取消了估时`,
@@ -159,7 +160,7 @@ export default class Estimate {
       console.log('restart estimate');
       this.globalStore.user.estimate = null;
       this.globalStore.user.showResult = false;
-      this.showEstimate = false;
+      this.enableShowEstimateResult = false;
       Taro.navigateTo({
         url: inputPath,
       });
@@ -171,7 +172,7 @@ export default class Estimate {
       this.globalStore.user.joinedRoomId = null;
       this.globalStore.user.createdRoomId = null;
       this.globalStore.user.showResult = false;
-      this.showEstimate = false;
+      this.enableShowEstimateResult = false;
       Taro.redirectTo({
         url: hallPath,
       });

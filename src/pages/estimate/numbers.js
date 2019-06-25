@@ -41,12 +41,11 @@ export default class Estimate extends Component {
     const {
       estimatedMembers,
       unestimatedMembers,
-      showEstimate,
+      enableShowEstimateResult,
     } = estimateStore;
 
     const isAdmintor = checkIsAdmintor({ user, room });
     const className = `iconfont icon-weitaoshuzi${user.estimate} number-card__text`;
-    console.log(JSON.stringify(room.members, null, '\t'));
     const estimatedTitle = `${estimatedMembers.length}人给出了估时`;
     const unestimatedTitle = `${unestimatedMembers.length}人未给出估时`;
 
@@ -55,7 +54,7 @@ export default class Estimate extends Component {
         <View className='number-card'><Text className={className} /></View>
         <View className='page__content'>
           <AtButton type='primary' onClick={this.reselectEstimate}>重选点数</AtButton>
-          {(isAdmintor && showEstimate) && <AtButton className='btn--show-result' onClick={this.showResult}>展示结果</AtButton>}
+          {(isAdmintor && enableShowEstimateResult) && <AtButton className='btn--show-result' onClick={this.showResult}>展示结果</AtButton>}
           <Card title={estimatedTitle}>
             {estimatedMembers
               .map(item => (

@@ -20,7 +20,6 @@ import { computeEstimates } from './utils';
 import withBasicLayout from '../../utils/withBasicLayout';
 
 import './index.less';
-import { roomPath } from '../../constants/paths';
 
 @withBasicLayout()
 @inject('global')
@@ -56,11 +55,12 @@ export default class Result extends Component {
   }
 
   backToRoom = () => {
-    const { global } = this.props;
-    const { user } = global;
-    Taro.navigateTo({
-      url: `${roomPath}?id=${user.joinedRoomId}`,
-    });
+    const { hall } = this.props;
+    hall.backToRoom();
+  }
+
+  renderEmptyContent = () => {
+
   }
 
   render() {
@@ -68,22 +68,28 @@ export default class Result extends Component {
     const { hall, global, estimate } = this.props;
     const { user } = global;
     const { room } = hall;
-    const { estimates } = estimate;
-    const isAdmintor = checkIsAdmintor({ user, room });
-    const stat = computeEstimates(estimates);
-    const estimateDetails = estimates
-      .sort((a, b) => {
-        return b.estimate - a.estimate;
-      })
-      .map(item => (
-        <View key={item.name} className='result__detail'>
-          <Text className='result__name'>{item.name}</Text>
-          <Text className='result__value'>{item.estimate}</Text>
-        </View>
-      ));
-    return (
+    const { estimates, enableShowEstimateResult } = estimate;
+    let content = (
       <View>
-        <View className='page__content'>
+        <Text>当前未展示估时结果</Text>
+        <AtButton onClick={this.backToRoom}>返回房间</AtButton>
+      </View>
+    );
+    if (enableShowEstimateResult === true) {
+      const isAdmintor = checkIsAdmintor({ user, room });
+      const stat = computeEstimates(estimates);
+      const estimateDetails = estimates
+        .sort((a, b) => {
+          return b.estimate - a.estimate;
+        })
+        .map(item => (
+          <View key={item.name} className='result__detail'>
+            <Text className='result__name'>{item.name}</Text>
+            <Text className='result__value'>{item.estimate}</Text>
+          </View>
+        ));
+      content = (
+        <View>
           <Card title='统计'>
             {stat.map(s => (
               <View key={s.id} className='stats'>
@@ -107,10 +113,13 @@ export default class Result extends Component {
               >结束估时</AtButton>
             </View>
           )}
-          {/* <AtButton
-            className='btn--stop-estimate'
-            onClick={this.backToRoom}
-          >回到房间</AtButton> */}
+        </View>
+      )
+    }
+    return (
+      <View>
+        <View className='page__content'>
+          {content}
           <AtActionSheet
             isOpened={actionSheetVisible}
             cancelText='取消'

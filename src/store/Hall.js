@@ -48,8 +48,10 @@ export default class Hall {
   }
 
   backToRoom() {
+    const { user } = this.globalStore;
+    user.showResult = false;
     Taro.navigateTo({
-      url: roomPath,
+      url: `${roomPath}?id=${user.joinedRoomId}`,
     });
   }
 
