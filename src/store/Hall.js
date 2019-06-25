@@ -68,6 +68,7 @@ export default class Hall {
       this.room = room;
     });
     client.on('globalCreateRoomSuccess', ({ rooms }) => {
+      console.log('other people create room success', rooms);
       this.rooms = rooms;
     });
     client.on('joinRoomSuccess', ({ user, room }) => {

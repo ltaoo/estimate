@@ -35,9 +35,10 @@ export default class Auth {
 
   // 一些和 Auth 相关的监听
   addListeners(client) {
-    client.on('loginSuccess', ({ user }) => {
+    client.on('loginSuccess', ({ user, rooms }) => {
       console.log('login success', user.name);
       this.globalStore.user = user;
+      this.globalStore.hallStore.rooms = rooms;
       Taro.atMessage({
         type: 'success',
         message: '登录成功',

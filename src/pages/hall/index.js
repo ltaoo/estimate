@@ -111,6 +111,9 @@ export default class HallPage extends Component {
             <Card title='输入房间编号或创建房间'>
               <AtInput
                 title='房间号'
+                type='number'
+                maxLength={6}
+                clear
                 placeholder='请输入房间号'
                 onChange={this.handleRoomIdChange}
               />
